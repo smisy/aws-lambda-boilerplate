@@ -1,4 +1,4 @@
-import { ApiCallback, ApiResponse, ErrorResponseBody } from './api.interfaces';
+import { ApiCallback, ApiResponse } from './api.interfaces';
 import {
   BadRequestResult,
   ForbiddenResult,
@@ -7,7 +7,6 @@ import {
   UnprocessableEntityResult,
   UnauthorizedResult,
   RequestResult,
-  ErrorResult,
   SuccessResult
 } from './errors';
 import { HttpStatusCode } from './http-status-codes';
