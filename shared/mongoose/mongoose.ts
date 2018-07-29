@@ -1,18 +1,39 @@
 
 import * as mongoose from 'mongoose';
-let connection: mongoose.Mongoose;
+let connection: boolean;
 
-export const startMongoose = async (): Promise<mongoose.Mongoose> => {
+export const startMongoose = (): Promise<mongoose.Mongoose> => {
   // Mongoose uses global Promise by default
+  const options = {
+    connectTimeoutMS: 3000,
+    socketTimeoutMS: 3000,
+    poolSize: 15, // Maintain up to 10 socket connections
+    // If not connected, return errors immediately rather than waiting for reconnect
+    bufferMaxEntries: 0,
+    bufferCommands: false,
+    useNewUrlParser: true
+  };
   const mongoURL: string = `mongodb://localhost:27017/aws-lambda`;
-  if (!connection) {
-    console.log('Connect Mongodb:', mongoURL);
-    connection = await mongoose.connect(
+  return new Promise(async (resolve, reject) => {
+    if (connection) {
+      console.log('MongoDB has connected already');
+      return resolve();
+    }
+    mongoose.set('bufferCommands', false);
+    mongoose.connect(
       mongoURL,
-      { useNewUrlParser: true }
+      options, (err) => {
+        if (err) {
+          console.log('Connect MongoDB Error:', err);
+          return reject(err);
+        }
+        connection = true;
+        console.log('Connected MongoDB');
+        return resolve();
+      }
     );
-  }
-  return connection;
+
+  });
 };
 
 export const stoptMongoose = async (): Promise<void> => {

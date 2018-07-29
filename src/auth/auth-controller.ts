@@ -5,6 +5,7 @@ import { ApiHandler, ApiEvent, ApiContext, ApiCallback } from '../../shared/api.
 import { UserRegisterHandler } from './services/user-register-handler';
 import { RegisterInputModel, RegisterOutputModel } from './models/auth-model';
 import { ResponseBuilder } from '../../shared/response-builder';
+import { startMongoose } from '../../shared/mongoose/mongoose';
 
 export class AuthController {
   static connection: mongoose.Mongoose;
@@ -13,7 +14,7 @@ export class AuthController {
    * @memberof AuthController
    */
   constructor(
-  // tslint:disable-next-line:no-empty
+    // tslint:disable-next-line:no-empty
   ) {
   }
 
@@ -27,13 +28,17 @@ export class AuthController {
   public registerUser: ApiHandler = async (event: ApiEvent, context: ApiContext, callback: ApiCallback): Promise<void> => {
     const userData: RegisterInputModel = JSON.parse(event.body);
     let userOutput: RegisterOutputModel;
-    console.log('UserController.registerUser:', userData);
-    try {
-      userOutput = await this.userRegister.handle(userData);
-      return ResponseBuilder.ok<RegisterOutputModel>(userOutput, callback);
-    } catch (error) {
-      return ResponseBuilder.internalServerError(error, callback);
-    }
+    startMongoose().then(async () => {
+      try {
+        console.log('UserController.registerUser:', userData);
+        userOutput = await this.userRegister.handle(userData);
+        console.log('userOutput:', userOutput);
+        return ResponseBuilder.ok<RegisterOutputModel>(userOutput, callback);
+      } catch (error) {
+        console.log('Register User Error:', error);
+        return ResponseBuilder.internalServerError(error, callback);
+      }
+    });
   }
 }
 
