@@ -85,12 +85,6 @@ let UserSchema = new mongoose.Schema(
     confirmAt: {
       type: Date
     },
-    type: {
-      type: String,
-      enum: Object.keys(USER_TYPES),
-      default: USER_TYPES.user,
-      required: 'Type is required'
-    },
     deleted: {
       type: Boolean,
       default: false
