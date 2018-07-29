@@ -1,0 +1,28 @@
+{
+  "include": [
+    "**/*.ts"
+  ],
+  "exclude": [
+    "test/**/*",
+    "**/*.d.ts",
+    "**/*.spec.ts",
+    "**/*.interfaces.ts",
+    "src/cities/cities.ts",
+    "src/health/health.ts",
+    "src/swagger/swagger.ts"
+  ],
+  "extension": [
+    ".ts"
+  ],
+  "require": [
+    "ts-node/register"
+  ],
+  "reporter": [
+    "text-summary",
+    "html",
+    "lcov"
+  ],
+  "sourceMap": true,
+  "instrument": true,
+  "all": true
+}
