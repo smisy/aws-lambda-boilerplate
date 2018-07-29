@@ -36,7 +36,7 @@ export class AuthController {
         return ResponseBuilder.ok<RegisterOutputModel>(userOutput, callback);
       } catch (error) {
         console.log('Register User Error:', error);
-        return ResponseBuilder.internalServerError(error, callback);
+        return ResponseBuilder.unprocessableEntity(error.message, callback);
       }
     });
   }
