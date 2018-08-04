@@ -5,11 +5,7 @@
   "exclude": [
     "test/**/*",
     "**/*.d.ts",
-    "**/*.spec.ts",
-    "**/*.interfaces.ts",
-    "src/cities/cities.ts",
-    "src/health/health.ts",
-    "src/swagger/swagger.ts"
+    "**/*.spec.ts"
   ],
   "extension": [
     ".ts"
