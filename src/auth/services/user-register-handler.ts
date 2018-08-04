@@ -21,7 +21,7 @@ export class UserRegisterHandler implements CqrsServiceBase {
             };
             return returnValue;
         } catch (error) {
-            console.log('Register User Error:', error);
+            console.log('Register User Service Error:', error);
             throw error;
         }
     }

@@ -40,8 +40,7 @@ let UserSchema = new mongoose.Schema(
       sparse: true, // For this to work on a previously indexed field, the index must be dropped & the application restarted.
       lowercase: true,
       trim: true,
-      default: undefined,
-      required: [true, 'Please fill a valid email address']
+      default: undefined
     },
     name: {
       type: String,
@@ -51,7 +50,8 @@ let UserSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      default: ''
+      default: '',
+      required: [true, 'Please fill in your password']
     },
     salt: {
       type: String

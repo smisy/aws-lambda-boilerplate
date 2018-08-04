@@ -6,6 +6,7 @@ import { UserRegisterHandler } from './services/user-register-handler';
 import { RegisterInputModel, RegisterOutputModel } from './models/auth-model';
 import { ResponseBuilder } from '../../shared/response-builder';
 import { startMongoose } from '../../shared/mongoose/mongoose';
+import { UserDataModel } from '../users/models/user-model';
 
 export class AuthController {
   static connection: mongoose.Mongoose;
@@ -33,7 +34,7 @@ export class AuthController {
         console.log('UserController.registerUser:', userData);
         userOutput = await this.userRegister.handle(userData);
         console.log('userOutput:', userOutput);
-        return ResponseBuilder.ok<RegisterOutputModel>(userOutput, callback);
+        return ResponseBuilder.ok<UserDataModel>(userOutput.user, callback);
       } catch (error) {
         console.log('Register User Error:', error);
         return ResponseBuilder.unprocessableEntity(error.message, callback);

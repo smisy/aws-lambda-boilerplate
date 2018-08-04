@@ -1,7 +1,7 @@
 
 import * as mongoose from 'mongoose';
 let connection: boolean;
-
+// tslint:disable-next-line:promise-function-async
 export const startMongoose = (): Promise<mongoose.Mongoose> => {
   // Mongoose uses global Promise by default
   const options = {
