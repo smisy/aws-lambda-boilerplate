@@ -53,11 +53,11 @@ functions:
               - ${file(./swagger/error-responses/internal-server-error.yml)}
 custom:
   documentation: ${file(./swagger/documentation.yml)}
-  customDomain:
-    basePath: "api"
-    domainName: serverless-sample.balassy.me
-    certificateName: serverless-sample.balassy.me
-    stage: ${self:provider.stage}
-    createRoute53Record: true
+  # customDomain:
+  #   basePath: "api"
+  #   domainName: <your domain>
+  #   certificateName: <your domain>
+  #   stage: ${self:provider.stage}
+  #   createRoute53Record: true
   output:
     file: .serverless/output.json
