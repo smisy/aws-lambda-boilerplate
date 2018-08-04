@@ -35,28 +35,28 @@ describe('Login and generate token', () => {
   });
 
   it('should return 200 and token for login request with valid username & password', async () => {
-    let { response } = await authRequest.callLoginAPI(loginData);
+    let response = await authRequest.callLoginAPI(loginData);
     response.statusCode.should.be.equal(200);
     response.body.should.have.property('token');
   });
 
   it('should return 401 for login request with invalid username & password', async () => {
-    let { response } = await authRequest.callLoginAPI(invalidLoginData);
+    let response = await authRequest.callLoginAPI(invalidLoginData);
     response.statusCode.should.be.equal(401);
   });
 
   it('should return 401 for login request with missing username', async () => {
-    let { response } = await authRequest.callLoginAPI({password: loginData.password});
+    let response = await authRequest.callLoginAPI({ password: loginData.password });
     response.statusCode.should.be.equal(401);
   });
 
   it('should return 401 for login request with missing password', async () => {
-    let { response } = await authRequest.callLoginAPI({userName: loginData.userName});
+    let response = await authRequest.callLoginAPI({ userName: loginData.userName });
     response.statusCode.should.be.equal(401);
   });
 
   it('should return 401 for login request with missing username & password', async () => {
-    let { response } = await authRequest.callLoginAPI({});
+    let response = await authRequest.callLoginAPI({});
     response.statusCode.should.be.equal(401);
   });
 });
