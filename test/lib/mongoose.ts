@@ -4,7 +4,11 @@ const Mockgoose = mockgoose.Mockgoose;
 const mockgooseTest = new Mockgoose(mongoose);
 
 export const startMockgoose = async (): Promise<void> => {
-  await mockgooseTest.prepareStorage();
+  return new Promise<void>((resolve) => {
+    mockgooseTest.prepareStorage().then(() => {
+      resolve();
+    });
+  });
 };
 
 export const resetMongoose = async (): Promise<void> => {

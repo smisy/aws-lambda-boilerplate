@@ -39,6 +39,7 @@
     "@types/aws-lambda": "^8.10.9",
     "@types/chai": "^4.1.4",
     "@types/chance": "^1.0.1",
+    "@types/jsonwebtoken": "^7.2.8",
     "@types/lodash": "^4.14.115",
     "@types/mocha": "^5.2.5",
     "@types/mongoose": "^5.2.3",
@@ -68,6 +69,7 @@
   },
   "dependencies": {
     "generate-password": "^1.4.0",
+    "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.10",
     "mockgoose": "^7.3.5",
     "mongoose": "^5.2.5",
