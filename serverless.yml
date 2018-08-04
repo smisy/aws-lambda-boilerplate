@@ -2,7 +2,7 @@ service: serverless-sample
 
 provider:
   name: aws
-  runtime: nodejs8.10
+  runtime: nodejs6.10
   stage: demo
   region: us-east-1
   iamRoleStatements:
@@ -43,6 +43,31 @@ functions:
             tags:
               - Auth
             description: Returns the new user.
+            methodResponses:
+              - statusCode: '200'
+                description: Returned when the operation is completed successfully.
+                responseModels:
+                  "application/json": RegisterOutputModel
+              - ${file(./swagger/error-responses/bad-request.yml)}
+              - ${file(./swagger/error-responses/forbidden.yml)}
+              - ${file(./swagger/error-responses/not-found.yml)}
+              - ${file(./swagger/error-responses/internal-server-error.yml)}
+  loginUser:
+    handler: src/auth/auth.login
+    description: Login user and generate jwt token.
+
+    environment:
+
+    events:
+      - http:
+          path: auth/login
+          method: post
+          cors: true
+          documentation:
+            summary: Login user and generate jwt token.
+            tags:
+              - Auth
+            description: Returns a token.
             methodResponses:
               - statusCode: '200'
                 description: Returned when the operation is completed successfully.
