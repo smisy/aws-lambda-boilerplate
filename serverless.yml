@@ -2,7 +2,7 @@ service: serverless-sample
 
 provider:
   name: aws
-  runtime: nodejs6.10
+  runtime: nodejs8.10
   stage: demo
   region: us-east-1
   iamRoleStatements:
