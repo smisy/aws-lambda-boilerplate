@@ -62,7 +62,7 @@ export class AuthController {
         return ResponseBuilder.ok<LoginOutputModel>(loginOutput, callback);
       } catch (error) {
         console.log('Login User Error:', error);
-        return ResponseBuilder.unprocessableEntity(error.message, callback);
+        return ResponseBuilder.unauthorized(error.message, callback);
       }
     });
   }
