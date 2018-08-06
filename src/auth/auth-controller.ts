@@ -2,18 +2,35 @@ import { Inject } from 'typescript-ioc';
 import * as mongoose from 'mongoose';
 
 // import { UserRegisterHandler } from './services/user-register-handler';
-import { LoginInputModel, LoginOutputModel, RegisterInputModel, RegisterOutputModel } from './models/auth-model';
+import {
+  LoginInputModel,
+  LoginOutputModel,
+  RegisterInputModel,
+  RegisterOutputModel,
+  AuthUser
+} from './models/auth-model';
 import { ResponseBuilder } from '../../shared/response-builder';
 import { startMongoose } from '../../shared/mongoose/mongoose';
 import { UserLoginHandler } from './services/user-login-handler';
-import { APIGatewayProxyHandler, APIGatewayProxyEvent, Context, APIGatewayProxyResult } from 'aws-lambda';
+import {
+  APIGatewayProxyHandler,
+  APIGatewayProxyEvent,
+  Context,
+  APIGatewayProxyResult,
+  CustomAuthorizerHandler,
+  CustomAuthorizerEvent,
+  CustomAuthorizerResult,
+  PolicyDocument,
+  Statement
+} from 'aws-lambda';
 import { UserRegisterHandler } from './services/user-register-handler';
+import { UserAuthorizerHandler } from './services/user-authorize-handler';
 
 export class AuthController {
   static connection: mongoose.Mongoose;
   @Inject private userRegister: UserRegisterHandler;
   @Inject private userLogin: UserLoginHandler;
-  // @Inject private userAuthorizer: UserAuthorizerHandler;
+  @Inject private userAuthorizer: UserAuthorizerHandler;
 
   /**
    * @memberof AuthController
@@ -71,33 +88,53 @@ export class AuthController {
     }
   }
 
-  // /**
-  //  * Authorize user token.
-  //  *
-  //  *
-  //  * @returns {AuthUser}
-  //  * @memberof AuthController
-  //  */
-  // public authorizer: AuthorizerHandler = async (event: CustomAuthorizerEvent, context: ApiContext, callback: CustomAuthorizerCallback): Promise<void> => {
-  //   const authorization = event.authorizationToken || '';
-  //   const authPrefix = 'Bearer ';
-  //   startMongoose().then(async () => {
-  //     try {
-  //       let user: AuthUser;
-  //       let token: string;
-  //       if (authorization.startsWith(authPrefix)) {
-  //         token = authorization.substr(authPrefix.length);
-  //         user = await this.userAuthorizer.handle(token);
-  //         return ResponseBuilder.ok<AuthUser>(user, callback);
-  //       } else {
-  //         return ResponseBuilder.unauthorized('Unauthorized', callback);
-  //       }
-  //     } catch (error) {
-  //       console.log('Authorizer User Error:', error);
-  //       return ResponseBuilder.unauthorized(error.message, callback);
-  //     }
-  //   });
-  // }
+  /**
+   * Authorize user token.
+   *
+   *
+   * @returns {AuthUser}
+   * @memberof AuthController
+   */
+  public authorize: CustomAuthorizerHandler = async (event: CustomAuthorizerEvent, context: Context): Promise<CustomAuthorizerResult> => {
+    const authorization = event.authorizationToken || '';
+    const authPrefix = 'Bearer ';
+    await startMongoose();
+
+    try {
+      let user: AuthUser;
+      let token: string;
+      if (authorization.startsWith(authPrefix)) {
+        token = authorization.substr(authPrefix.length);
+        user = await this.userAuthorizer.handle(token);
+        const policy = this.generatePolicy(user.id, 'Allow', event.methodArn);
+        return policy;
+      } else {
+        return this.generatePolicy(undefined, 'Disallow', event.methodArn);
+      }
+    } catch (error) {
+      console.log('Authorizer User Error:', error);
+      return this.generatePolicy(undefined, 'Disallow', event.methodArn);
+    }
+  }
+
+  private generatePolicy = (principalId: string, effect: string, resource: string): CustomAuthorizerResult => {
+    const policyDocument = {} as PolicyDocument;
+
+    if (effect && resource) {
+      policyDocument.Version = '2012-10-17';
+      policyDocument.Statement = [];
+      const statementOne = {} as Statement;
+      statementOne.Effect = effect;
+      statementOne.Sid = resource;
+      policyDocument.Statement[0] = statementOne;
+    }
+    const authResponse: CustomAuthorizerResult = {
+      principalId,
+      policyDocument
+    };
+
+    return authResponse;
+  }
 }
 
 export default AuthController;
