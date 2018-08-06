@@ -1,18 +1,37 @@
 import { Inject } from 'typescript-ioc';
 import * as mongoose from 'mongoose';
 
-import { ApiHandler, ApiEvent, ApiContext, ApiCallback } from '../../shared/api.interfaces';
-import { UserRegisterHandler } from './services/user-register-handler';
-import { RegisterInputModel, RegisterOutputModel, LoginInputModel, LoginOutputModel } from './models/auth-model';
+// import { UserRegisterHandler } from './services/user-register-handler';
+import {
+  LoginInputModel,
+  LoginOutputModel,
+  RegisterInputModel,
+  RegisterOutputModel,
+  AuthUser
+} from './models/auth-model';
 import { ResponseBuilder } from '../../shared/response-builder';
 import { startMongoose } from '../../shared/mongoose/mongoose';
-import { UserDataModel } from '../users/models/user-model';
 import { UserLoginHandler } from './services/user-login-handler';
+import {
+  APIGatewayProxyHandler,
+  APIGatewayProxyEvent,
+  Context,
+  APIGatewayProxyResult,
+  CustomAuthorizerHandler,
+  CustomAuthorizerEvent,
+  CustomAuthorizerResult,
+  PolicyDocument,
+  Statement
+} from 'aws-lambda';
+import { UserRegisterHandler } from './services/user-register-handler';
+import { UserAuthorizerHandler } from './services/user-authorize-handler';
 
 export class AuthController {
   static connection: mongoose.Mongoose;
   @Inject private userRegister: UserRegisterHandler;
   @Inject private userLogin: UserLoginHandler;
+  @Inject private userAuthorizer: UserAuthorizerHandler;
+
   /**
    * @memberof AuthController
    */
@@ -28,20 +47,21 @@ export class AuthController {
    * @returns {RegisterOutputModel}
    * @memberof AuthController
    */
-  public registerUser: ApiHandler = async (event: ApiEvent, context: ApiContext, callback: ApiCallback): Promise<void> => {
+  public registerUser: APIGatewayProxyHandler = async (
+    event: APIGatewayProxyEvent,
+    context: Context): Promise<APIGatewayProxyResult> => {
     const userData: RegisterInputModel = JSON.parse(event.body);
     let userOutput: RegisterOutputModel;
-    startMongoose().then(async () => {
-      try {
-        console.log('UserController.registerUser:', userData);
-        userOutput = await this.userRegister.handle(userData);
-        console.log('userOutput:', userOutput);
-        return ResponseBuilder.ok<UserDataModel>(userOutput.user, callback);
-      } catch (error) {
-        console.log('Register User Error:', error);
-        return ResponseBuilder.unprocessableEntity(error.message, callback);
-      }
-    });
+    await startMongoose();
+    try {
+      console.log('UserController.registerUser:', userData);
+      userOutput = await this.userRegister.handle(userData);
+      console.log('userOutput:', userOutput);
+      return ResponseBuilder.ok(userOutput.user);
+    } catch (error) {
+      console.log('Register User Error:', error);
+      return ResponseBuilder.unprocessableEntity(error.message);
+    }
   }
 
   /**
@@ -51,20 +71,69 @@ export class AuthController {
    * @returns {LoginOutputModel}
    * @memberof AuthController
    */
-  public loginUser: ApiHandler = async (event: ApiEvent, context: ApiContext, callback: ApiCallback): Promise<void> => {
+  public loginUser: APIGatewayProxyHandler = async (
+    event: APIGatewayProxyEvent,
+    context: Context): Promise<APIGatewayProxyResult> => {
     const loginData: LoginInputModel = JSON.parse(event.body);
     let loginOutput: LoginOutputModel;
-    startMongoose().then(async () => {
-      try {
-        console.log('UserController.loginData:', loginData);
-        loginOutput = await this.userLogin.handle(loginData);
-        console.log('loginOutput:', loginOutput);
-        return ResponseBuilder.ok<LoginOutputModel>(loginOutput, callback);
-      } catch (error) {
-        console.log('Login User Error:', error);
-        return ResponseBuilder.unauthorized(error.message, callback);
+    await startMongoose();
+    try {
+      console.log('UserController.loginData:', loginData);
+      loginOutput = await this.userLogin.handle(loginData);
+      console.log('loginOutput:', loginOutput);
+      return ResponseBuilder.ok(loginOutput);
+    } catch (error) {
+      console.log('Login User Error:', error);
+      return ResponseBuilder.unauthorized(error.message);
+    }
+  }
+
+  /**
+   * Authorize user token.
+   *
+   *
+   * @returns {AuthUser}
+   * @memberof AuthController
+   */
+  public authorize: CustomAuthorizerHandler = async (event: CustomAuthorizerEvent, context: Context): Promise<CustomAuthorizerResult> => {
+    const authorization = event.authorizationToken || '';
+    const authPrefix = 'Bearer ';
+    await startMongoose();
+
+    try {
+      let user: AuthUser;
+      let token: string;
+      if (authorization.startsWith(authPrefix)) {
+        token = authorization.substr(authPrefix.length);
+        user = await this.userAuthorizer.handle(token);
+        const policy = this.generatePolicy(user.id, 'Allow', event.methodArn);
+        return policy;
+      } else {
+        return this.generatePolicy(undefined, 'Disallow', event.methodArn);
       }
-    });
+    } catch (error) {
+      console.log('Authorizer User Error:', error);
+      return this.generatePolicy(undefined, 'Disallow', event.methodArn);
+    }
+  }
+
+  private generatePolicy = (principalId: string, effect: string, resource: string): CustomAuthorizerResult => {
+    const policyDocument = {} as PolicyDocument;
+
+    if (effect && resource) {
+      policyDocument.Version = '2012-10-17';
+      policyDocument.Statement = [];
+      const statementOne = {} as Statement;
+      statementOne.Effect = effect;
+      statementOne.Sid = resource;
+      policyDocument.Statement[0] = statementOne;
+    }
+    const authResponse: CustomAuthorizerResult = {
+      principalId,
+      policyDocument
+    };
+
+    return authResponse;
   }
 }
 

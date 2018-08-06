@@ -1,4 +1,3 @@
-import { ApiCallback, ApiResponse } from './api.interfaces';
 import {
   BadRequestResult,
   ForbiddenResult,
@@ -10,50 +9,51 @@ import {
   SuccessResult
 } from './errors';
 import { HttpStatusCode } from './http-status-codes';
+import { APIGatewayProxyResult } from '../node_modules/@types/aws-lambda';
 
 export class ResponseBuilder {
-  public static badRequest(description: string, callback: ApiCallback): void {
+  public static badRequestz(description: string): APIGatewayProxyResult {
     const errorResult: BadRequestResult = new BadRequestResult(description);
-    ResponseBuilder._returnAs<BadRequestResult>(errorResult, errorResult.code, callback);
+    return ResponseBuilder._returnAs(errorResult, errorResult.code);
   }
 
-  public static forbidden(description: string, callback: ApiCallback): void {
+  public static forbidden(description: string): APIGatewayProxyResult {
     const errorResult: ForbiddenResult = new ForbiddenResult(description);
-    ResponseBuilder._returnAs<ForbiddenResult>(errorResult, errorResult.code, callback);
+    return ResponseBuilder._returnAs(errorResult, errorResult.code);
   }
 
-  public static unauthorized(description: string, callback: ApiCallback): void {
+  public static unauthorized(description: string): APIGatewayProxyResult {
     const errorResult: UnauthorizedResult = new UnauthorizedResult(description);
-    ResponseBuilder._returnAs<UnauthorizedResult>(errorResult, errorResult.code, callback);
+    return ResponseBuilder._returnAs(errorResult, errorResult.code);
   }
 
-  public static unprocessableEntity(description: string, callback: ApiCallback): void {
+  public static unprocessableEntity(description: string): APIGatewayProxyResult {
     const errorResult: UnprocessableEntityResult = new UnprocessableEntityResult(description);
-    ResponseBuilder._returnAs<UnprocessableEntityResult>(errorResult, errorResult.code, callback);
+    return ResponseBuilder._returnAs(errorResult, errorResult.code);
   }
 
-  public static internalServerError(description: string, callback: ApiCallback): void {
+  public static internalServerError(description: string): APIGatewayProxyResult {
     const errorResult: InternalServerErrorResult = new InternalServerErrorResult(description);
-    ResponseBuilder._returnAs<InternalServerErrorResult>(errorResult, errorResult.code, callback);
+    return ResponseBuilder._returnAs(errorResult, errorResult.code);
   }
 
-  public static notFound(description: string, callback: ApiCallback): void {
+  public static notFound(description: string): APIGatewayProxyResult {
     const errorResult: NotFoundResult = new NotFoundResult(description);
-    ResponseBuilder._returnAs<NotFoundResult>(errorResult, errorResult.code, callback);
+    return ResponseBuilder._returnAs(errorResult, errorResult.code);
   }
 
-  public static ok<T>(result: T, callback: ApiCallback): void {
-    ResponseBuilder._returnAs<T>(new SuccessResult(result), HttpStatusCode.Ok, callback);
+  public static ok(result: Object): APIGatewayProxyResult {
+    return ResponseBuilder._returnAs(new SuccessResult(result), HttpStatusCode.Ok);
   }
 
-  private static _returnAs<T>(result: RequestResult, statusCode: HttpStatusCode, callback: ApiCallback): void {
-    const response: ApiResponse = {
-      body: result.toResponseFormat(),
+  private static _returnAs(result: RequestResult, statusCode: HttpStatusCode): APIGatewayProxyResult {
+    const response: APIGatewayProxyResult = {
+      body: JSON.stringify(result.toResponseFormat()),
       headers: {
         'Access-Control-Allow-Origin': '*'  // This is required to make CORS work with AWS API Gateway Proxy Integration.
       },
       statusCode
     };
-    callback(undefined, response);
+    return response;
   }
 }

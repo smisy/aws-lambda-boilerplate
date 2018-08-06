@@ -1,12 +1,17 @@
 import { HttpStatusCode } from './http-status-codes';
 
 export abstract class RequestResult {
-  abstract toResponseFormat(): any;
-
+  abstract toResponseFormat(): Object;
 }
-
-export class SuccessResult extends RequestResult {
-  constructor(private object: any) {
+interface ErrorRestResponse {
+  error: {
+    code: number,
+    message: string;
+    error?: Object[];
+  };
+}
+export class SuccessResult<T> extends RequestResult {
+  constructor(private object: T) {
     super();
     this.object = object;
   }
@@ -15,22 +20,22 @@ export class SuccessResult extends RequestResult {
   }
 }
 export abstract class ErrorResult extends RequestResult {
-  errors?: any[];
+  private result: ErrorRestResponse;
 
   constructor(public code: HttpStatusCode, public message: string) {
     super();
-    this.code = code;
-    this.message = message;
-  }
-
-  toResponseFormat() {
-    return {
+    this.result = {
       error: {
-        code: this.code,
-        message: this.message,
-        errors: this.errors
+        code: 500,
+        message: ''
       }
     };
+    this.result.error.code = code;
+    this.result.error.message = message;
+  }
+
+  toResponseFormat(): ErrorRestResponse {
+    return this.result;
   }
 
 }

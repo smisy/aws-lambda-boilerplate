@@ -1,6 +1,7 @@
 import AuthController from './auth-controller';
-import { ApiHandler } from '../../shared/api.interfaces';
+import { APIGatewayProxyHandler, CustomAuthorizerHandler } from 'aws-lambda';
 
 const authController: AuthController = new AuthController();
-export const register: ApiHandler = authController.registerUser;
-export const login: ApiHandler = authController.loginUser;
+export const register: APIGatewayProxyHandler = authController.registerUser;
+export const login: APIGatewayProxyHandler = authController.loginUser;
+export const authorize: CustomAuthorizerHandler = authController.authorize;
