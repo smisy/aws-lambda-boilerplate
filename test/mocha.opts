@@ -4,4 +4,4 @@
 --full-trace
 --timeout 1500000
 --exit
-test/**/*.spec.ts
+test/**/authorize-handler.spec.ts
