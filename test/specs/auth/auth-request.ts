@@ -14,7 +14,7 @@ export  class AuthRestRequest extends RestRequest {
     return await this.CallRestAPI<LoginOutputModel>(login, { body });
   }
 
-  async callAuthorizeAPI(token: string): Promise<CustomAuthorizerResult> {
+  async callAuthorizeAPI(token?: string): Promise<CustomAuthorizerResult> {
     const event: CustomAuthorizerEvent = {} as CustomAuthorizerEvent;
     let context: Context;
     event.authorizationToken = token;
