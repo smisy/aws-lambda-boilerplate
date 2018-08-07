@@ -1,6 +1,8 @@
 import { RegisterInputModel, LoginInputModel } from '../../../src/auth/models/auth-model';
 import { AuthRestRequest } from './auth-request';
 import { startMockgoose, resetMongoose } from '../../lib/mongoose';
+import 'mocha';
+import 'should';
 
 const newUser: RegisterInputModel = {
   name: 'Test',
@@ -29,10 +31,18 @@ describe('Login and generate token', () => {
     await resetMongoose();
   });
 
-  it('should return 200 and token for authorize request with valid token', async () => {
-
+  it('should return principalId as user Id for authorize request with valid token', async () => {
     let response = await authRequest.callAuthorizeAPI(token);
-    console.log('authorize:', response);
+    response.should.have.property('principalId');
   });
 
+  it('should return principalId as user Id for authorize request with invalid token', async () => {
+    let response = await authRequest.callAuthorizeAPI('12345678');
+    response.should.have.property('principalId').and.equal(undefined);
+  });
+
+  it('should return principalId as user Id for authorize request with empty token', async () => {
+    let response = await authRequest.callAuthorizeAPI();
+    response.should.have.property('principalId').and.equal(undefined);
+  });
 });
