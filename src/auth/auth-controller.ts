@@ -95,7 +95,9 @@ export class AuthController {
    * @returns {AuthUser}
    * @memberof AuthController
    */
-  public authorize: CustomAuthorizerHandler = async (event: CustomAuthorizerEvent, context: Context): Promise<CustomAuthorizerResult> => {
+  public authorize: CustomAuthorizerHandler = async (
+    event: CustomAuthorizerEvent,
+    context: Context): Promise<CustomAuthorizerResult> => {
     const authorization = event.authorizationToken || '';
     const authPrefix = 'Bearer ';
     await startMongoose();
@@ -107,13 +109,14 @@ export class AuthController {
         token = authorization.substr(authPrefix.length);
         user = await this.userAuthorizer.handle(token);
         const policy = this.generatePolicy(user.id, 'Allow', event.methodArn);
+        console.log('policy:', policy);
         return policy;
       } else {
-        return this.generatePolicy(undefined, 'Disallow', event.methodArn);
+        return this.generatePolicy(undefined, 'Deny', event.methodArn);
       }
     } catch (error) {
       console.log('Authorizer User Error:', error);
-      return this.generatePolicy(undefined, 'Disallow', event.methodArn);
+      return this.generatePolicy(undefined, 'Deny', event.methodArn);
     }
   }
 
@@ -123,10 +126,14 @@ export class AuthController {
     if (effect && resource) {
       policyDocument.Version = '2012-10-17';
       policyDocument.Statement = [];
-      const statementOne = {} as Statement;
-      statementOne.Effect = effect;
-      statementOne.Sid = resource;
-      policyDocument.Statement[0] = statementOne;
+      const statementOne = {
+        Action: [
+          'execute-api:Invoke'
+        ],
+        Resource: resource,
+        Effect: effect
+      } as Statement;
+      policyDocument.Statement.push(statementOne);
     }
     const authResponse: CustomAuthorizerResult = {
       principalId,
