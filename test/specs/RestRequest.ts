@@ -11,7 +11,7 @@ export interface RequestOptions {
   body?: any;
   parameter?: { [name: string]: string };
   token?: string;
-  authorizer: AuthResponseContext;
+  authorizer?: AuthResponseContext;
 }
 
 export class ActionRequestOutput<T> {
