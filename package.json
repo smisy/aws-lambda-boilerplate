@@ -37,7 +37,7 @@
     "url": "https://github.com/ttruongatl/aws-lambda-boilerplate"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.10",
+    "@types/aws-lambda": "^8.10.11",
     "@types/chai": "^4.1.4",
     "@types/chance": "^1.0.1",
     "@types/jsonwebtoken": "^7.2.8",
