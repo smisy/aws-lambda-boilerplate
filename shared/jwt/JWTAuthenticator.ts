@@ -37,7 +37,7 @@ export class JWTAuthenticator implements Authenticator {
             { id: user.id } as Object,
             cert,
             {
-                expiresIn: 60 * 60
+                expiresIn: 60 * 60 * 24 * 30
             }
         );
     }
