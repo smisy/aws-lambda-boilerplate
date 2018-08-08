@@ -12,7 +12,7 @@ import { HttpStatusCode } from './http-status-codes';
 import { APIGatewayProxyResult } from '../node_modules/@types/aws-lambda';
 
 export class ResponseBuilder {
-  public static badRequestz(description: string): APIGatewayProxyResult {
+  public static badRequest(description: string): APIGatewayProxyResult {
     const errorResult: BadRequestResult = new BadRequestResult(description);
     return ResponseBuilder._returnAs(errorResult, errorResult.code);
   }
