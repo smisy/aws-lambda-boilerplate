@@ -2,6 +2,7 @@ import { APIGatewayProxyResult, APIGatewayProxyEvent, Context, APIGatewayProxyHa
 
 export interface RequestOptions {
   body?: any;
+  parameter?: { [name: string]: string; };
   token?: string;
 }
 
@@ -14,7 +15,9 @@ export class RestRequest {
   protected async CallRestAPI<T>(RestFunction: APIGatewayProxyHandler, options: RequestOptions): Promise<ActionRequestOutput<T>> {
     const event: APIGatewayProxyEvent = {} as APIGatewayProxyEvent;
     let context: Context;
-    event.body = JSON.stringify(options.body);
+    event.body = options.body ? JSON.stringify(options.body) : undefined;
+    event.pathParameters = options.parameter ? options.parameter : undefined;
+
     let response = await RestFunction(event, context, undefined) as APIGatewayProxyResult;
     const body = JSON.parse(response.body);
     return { response, body };

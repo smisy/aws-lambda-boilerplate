@@ -3,9 +3,6 @@ import ApiModel from '../../../shared/models/api-model';
 export enum USER_TYPES {
     user = 'user',
     admin = 'admin',
-    owner = 'owner',
-    technician = 'technician',
-    customer = 'customer'
 }
 
 export class UserDataBase extends ApiModel {
@@ -43,8 +40,12 @@ export class UserProfileDataModel extends ApiModel {
     email: string;
     displayName: string;
     profileImageURL: string;
+    timezone: string;
 }
 
+export class GetUserProfileInput extends ApiModel {
+  id: string;
+}
 export class GetUserProfileOutput extends ApiModel {
     user: UserProfileDataModel;
 }

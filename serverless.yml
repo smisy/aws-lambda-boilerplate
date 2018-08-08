@@ -27,12 +27,13 @@ package:
     - test/**/*
 
 functions:
+  authorize:
+    handler: src/auth/auth.authorize
+    cors: true
   registerUser:
     handler: src/auth/auth.register
     description: Register a new User.
-
     environment:
-
     events:
       - http:
           path: auth/register
@@ -55,9 +56,7 @@ functions:
   loginUser:
     handler: src/auth/auth.login
     description: Login user and generate jwt token.
-
     environment:
-
     events:
       - http:
           path: auth/login
@@ -68,6 +67,30 @@ functions:
             tags:
               - Auth
             description: Returns a token.
+            methodResponses:
+              - statusCode: '200'
+                description: Returned when the operation is completed successfully.
+                responseModels:
+                  "application/json": RegisterOutputModel
+              - ${file(./swagger/error-responses/bad-request.yml)}
+              - ${file(./swagger/error-responses/forbidden.yml)}
+              - ${file(./swagger/error-responses/not-found.yml)}
+              - ${file(./swagger/error-responses/internal-server-error.yml)}
+  getUserProfile:
+    handler: src/users/user.getProfile
+    description: Get User Profile
+    environment:
+    events:
+      - http:
+          path: users/profile
+          method: get
+          cors: true
+          authorizer: authorize
+          documentation:
+            summary: Get User Profile
+            tags:
+              - User
+            description: Returns a user profile.
             methodResponses:
               - statusCode: '200'
                 description: Returned when the operation is completed successfully.
