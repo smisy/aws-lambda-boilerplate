@@ -1,6 +1,5 @@
 
 import * as mongoose from 'mongoose';
-let connection: boolean;
 // tslint:disable-next-line:promise-function-async
 export const startMongoose = (): Promise<mongoose.Mongoose> => {
   // Mongoose uses global Promise by default
@@ -15,10 +14,6 @@ export const startMongoose = (): Promise<mongoose.Mongoose> => {
   };
   const mongoURL: string = `mongodb://localhost:27017/aws-lambda`;
   return new Promise((resolve, reject) => {
-    if (connection) {
-      console.log('MongoDB has connected already');
-      return resolve();
-    }
     mongoose.set('bufferCommands', false);
     mongoose.connect(
       mongoURL,
@@ -27,7 +22,6 @@ export const startMongoose = (): Promise<mongoose.Mongoose> => {
           console.log('Connect MongoDB Error:', err);
           return reject(err);
         }
-        connection = true;
         console.log('Connected MongoDB');
         return resolve();
       }
