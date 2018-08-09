@@ -1,9 +1,9 @@
-service: serverless-sample
+service: aws-lambda-bolierplate
 
 provider:
   name: aws
   runtime: nodejs8.10
-  stage: demo
+  stage: ${opt:stage,'local'}
   region: us-east-1
   iamRoleStatements:
     - Effect: "Allow"
@@ -11,19 +11,20 @@ provider:
         - "apigateway:GET"
       Resource:
         - "arn:aws:apigateway:${self:provider.region}::/restapis*"
+  environment:
+    MONGODB_URI: ${file(./env.${self:provider.stage}.yml):MONGODB_URI}
 
 plugins:
   - serverless-plugin-typescript
   - serverless-offline
-  - serverless-aws-documentation
-  - serverless-domain-manager
+  # - serverless-aws-documentation
+  # - serverless-domain-manager
   - serverless-stack-output
 
 package:
   include:
     src/**/!(*.spec).js
   exclude:
-    - node_modules/**/*
     - test/**/*
 
 functions:
@@ -48,7 +49,7 @@ functions:
               - statusCode: '200'
                 description: Returned when the operation is completed successfully.
                 responseModels:
-                  "application/json": RegisterOutputModel
+                  "application/json": RegisterOutput
               - ${file(./swagger/error-responses/bad-request.yml)}
               - ${file(./swagger/error-responses/forbidden.yml)}
               - ${file(./swagger/error-responses/not-found.yml)}
@@ -71,7 +72,7 @@ functions:
               - statusCode: '200'
                 description: Returned when the operation is completed successfully.
                 responseModels:
-                  "application/json": RegisterOutputModel
+                  "application/json": UserData
               - ${file(./swagger/error-responses/bad-request.yml)}
               - ${file(./swagger/error-responses/forbidden.yml)}
               - ${file(./swagger/error-responses/not-found.yml)}
@@ -95,7 +96,7 @@ functions:
               - statusCode: '200'
                 description: Returned when the operation is completed successfully.
                 responseModels:
-                  "application/json": RegisterOutputModel
+                  "application/json": UserData
               - ${file(./swagger/error-responses/bad-request.yml)}
               - ${file(./swagger/error-responses/forbidden.yml)}
               - ${file(./swagger/error-responses/not-found.yml)}

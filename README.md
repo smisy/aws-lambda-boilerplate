@@ -21,7 +21,46 @@ npm test
 npm run build
 ```
 
-### Start 
+### Start on local
 ```
 npm start
 ```
+
+### Environment variable
+`serverless` read env variables from env files. There 3 env files in project with 3 stages: local, development and production
+```
+env.local.yml
+env.development.yml
+env.production.yml
+```
+
+you should find the format file as below
+
+##### env.local.yml
+```
+MONGODB_URL: mongodb://localhost:27017/aws-lambda
+<variable name>: <value>
+```
+
+| npm scripts         | env                 |
+|---------------------|---------------------|
+| npm start           | env.local.yml       |
+| npm run deploy      | env.development.yml |
+| npm run deploy:prod | env.production.yml  |
+
+### Deploy to aws lambda services
+
+we need aws credential to deploy our aws-lambda functions to aws services.
+* Generate `aws_access_key_id` & `aws_secret_access_key` from your aws account
+* Add aws credential to your local
+  ```
+  $ vim  ~/.aws/credentials
+
+  [your profile]
+  aws_access_key_id=XXXXXXXXXXXXXX
+  aws_secret_access_key=XXXXXXXXXXXXXXXXXXX
+  region=us-east-1
+  ```
+* Deploy in development: `AWS_PROFILE=<your profile> npm run deploy`
+* Deploy in production: `AWS_PROFILE=<your profile>  npm run deploy:prod`
+

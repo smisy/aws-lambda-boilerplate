@@ -12,7 +12,7 @@ export const startMongoose = (): Promise<mongoose.Mongoose> => {
     bufferCommands: false,
     useNewUrlParser: true
   };
-  const mongoURL: string = `mongodb://localhost:27017/aws-lambda`;
+  const mongoURL: string = process.env.MONGODB_URI;
   return new Promise((resolve, reject) => {
     mongoose.set('bufferCommands', false);
     mongoose.connect(
@@ -22,7 +22,7 @@ export const startMongoose = (): Promise<mongoose.Mongoose> => {
           console.log('Connect MongoDB Error:', err);
           return reject(err);
         }
-        console.log('Connected MongoDB');
+        console.log('Connected MongoDB:', mongoURL);
         return resolve();
       }
     );
