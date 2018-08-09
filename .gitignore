@@ -16,3 +16,6 @@ yarn-error.log*
 # Test output
 .nyc_output
 coverage
+
+# build
+dist
