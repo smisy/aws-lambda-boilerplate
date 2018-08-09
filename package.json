@@ -12,12 +12,10 @@
     "predeploy": "npm run clean && npm run analyse",
     "deploy": "serverless deploy",
     "deploy:init": "serverless create_domain",
-    "postdeploy": "npm run test:integration",
     "lint": "tslint --project . --format verbose",
     "start": "serverless offline start --skipCacheInvalidation",
     "pretest": "npm run clean",
     "test": "nyc mocha",
-    "test:integration": "mocha --opts ./test/integration/mocha.opts",
     "serverless": "serverless",
     "tsc": "tsc",
     "tslint": "tslint"

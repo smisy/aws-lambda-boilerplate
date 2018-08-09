@@ -15,8 +15,8 @@ provider:
 plugins:
   - serverless-plugin-typescript
   - serverless-offline
-  - serverless-aws-documentation
-  - serverless-domain-manager
+  # - serverless-aws-documentation
+  # - serverless-domain-manager
   - serverless-stack-output
 
 package:
@@ -48,7 +48,7 @@ functions:
               - statusCode: '200'
                 description: Returned when the operation is completed successfully.
                 responseModels:
-                  "application/json": RegisterOutputModel
+                  "application/json": RegisterOutput
               - ${file(./swagger/error-responses/bad-request.yml)}
               - ${file(./swagger/error-responses/forbidden.yml)}
               - ${file(./swagger/error-responses/not-found.yml)}
@@ -71,7 +71,7 @@ functions:
               - statusCode: '200'
                 description: Returned when the operation is completed successfully.
                 responseModels:
-                  "application/json": RegisterOutputModel
+                  "application/json": UserData
               - ${file(./swagger/error-responses/bad-request.yml)}
               - ${file(./swagger/error-responses/forbidden.yml)}
               - ${file(./swagger/error-responses/not-found.yml)}
@@ -95,7 +95,7 @@ functions:
               - statusCode: '200'
                 description: Returned when the operation is completed successfully.
                 responseModels:
-                  "application/json": RegisterOutputModel
+                  "application/json": UserData
               - ${file(./swagger/error-responses/bad-request.yml)}
               - ${file(./swagger/error-responses/forbidden.yml)}
               - ${file(./swagger/error-responses/not-found.yml)}
