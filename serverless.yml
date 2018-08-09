@@ -1,9 +1,9 @@
-service: serverless-sample
+service: aws-lambda-bolierplate
 
 provider:
   name: aws
   runtime: nodejs8.10
-  stage: demo
+  stage: ${opt:stage,'local'}
   region: us-east-1
   iamRoleStatements:
     - Effect: "Allow"
@@ -11,6 +11,8 @@ provider:
         - "apigateway:GET"
       Resource:
         - "arn:aws:apigateway:${self:provider.region}::/restapis*"
+  environment:
+    MONGODB_URI: ${file(./env.${self:provider.stage}.yml):MONGODB_URI}
 
 plugins:
   - serverless-plugin-typescript
@@ -23,7 +25,6 @@ package:
   include:
     src/**/!(*.spec).js
   exclude:
-    - node_modules/**/*
     - test/**/*
 
 functions:
