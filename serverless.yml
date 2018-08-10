@@ -109,3 +109,4 @@ custom:
   #   file: .serverless/output.json
   webpack:
     webpackConfig: 'webpack.config.ts'
+    includeModules: true # enable auto-packing of external modules

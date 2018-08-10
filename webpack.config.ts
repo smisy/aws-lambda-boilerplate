@@ -2,6 +2,8 @@ import * as path from 'path';
 import * as webpack from 'webpack';
 // tslint:disable-next-line:no-var-requires
 const slsw = require('serverless-webpack');
+import * as nodeExternals from 'webpack-node-externals';
+
 // tslint:disable-next-line:no-var-requires
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
@@ -9,7 +11,7 @@ const config: webpack.Configuration = {
   mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
   devtool: 'source-map',
   target: 'node',
-  stats: 'minimal',
+  // stats: 'minimal',
   entry: Object.keys(slsw.lib.entries).reduce(
     (entries: { [x: string]: any }, key) => {
       entries[key] = ['./source-map-install.js', slsw.lib.entries[key]];
@@ -37,6 +39,7 @@ const config: webpack.Configuration = {
     ],
   },
   plugins: [new ForkTsCheckerWebpackPlugin()],
+  externals: [nodeExternals()]
 };
 
 module.exports = config;
