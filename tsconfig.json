@@ -25,9 +25,7 @@
     "newLine": "LF",
     "noFallthroughCasesInSwitch": true,
     "noUnusedParameters": false,
-    "outDir": "dist",
     "skipLibCheck": true,
-    "jsx": "react",
     "allowSyntheticDefaultImports": true
   },
   "exclude": [
