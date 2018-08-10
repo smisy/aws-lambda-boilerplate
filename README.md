@@ -50,7 +50,11 @@ MONGODB_URL: mongodb://localhost:27017/aws-lambda
 
 ### Deploy to aws lambda services
 
-we need aws credential to deploy our aws-lambda functions to aws services.
+We need aws credential to deploy our aws-lambda functions to aws services.
+#### NOTE:
+
+update your `MONGODB_URI` at `env.development.yml` and `env.production.yml`
+
 * Generate `aws_access_key_id` & `aws_secret_access_key` from your aws account
 * Add aws credential to your local
   ```
