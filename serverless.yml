@@ -29,6 +29,7 @@ package:
 functions:
   authorize:
     handler: src/auth/auth.authorize
+    description: Validate User Token
     cors: true
   registerUser:
     handler: src/auth/auth.register

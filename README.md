@@ -67,4 +67,3 @@ update your `MONGODB_URI` at `env.development.yml` and `env.production.yml`
   ```
 * Deploy in development: `AWS_PROFILE=<your profile> npm run deploy`
 * Deploy in production: `AWS_PROFILE=<your profile>  npm run deploy:prod`
-
