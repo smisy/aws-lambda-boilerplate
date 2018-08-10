@@ -1,19 +1,22 @@
 import { GetUserProfileHandler } from './services/get-user-profile-handler';
-import { Inject } from 'typescript-ioc';
 import { GetUserProfileInput, GetUserProfileOutput } from './models/user-model';
-import { APIGatewayProxyHandler, APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
+import {
+  APIGatewayProxyHandler,
+  APIGatewayProxyEvent,
+  APIGatewayProxyResult,
+  Context
+} from 'aws-lambda';
 import { startMongoose } from '../../shared/mongoose/mongoose';
 import { ResponseBuilder } from '../../shared/response-builder';
 
 export default class UserProfileController {
-  @Inject private getUsetProfileHandler: GetUserProfileHandler;
+  private getUsetProfileHandler: GetUserProfileHandler;
 
   /**
    * @memberof UserProfileController
    */
-  constructor(
-    // tslint:disable-next-line:no-empty
-  ) {
+  constructor() {
+    this.getUsetProfileHandler = new GetUserProfileHandler();
   }
 
   /**
@@ -25,7 +28,8 @@ export default class UserProfileController {
    */
   public get: APIGatewayProxyHandler = async (
     event: APIGatewayProxyEvent,
-    context: Context): Promise<APIGatewayProxyResult> => {
+    context: Context
+  ): Promise<APIGatewayProxyResult> => {
     console.log('context:', context);
     console.log('event:', event);
     const id = event.requestContext.authorizer.principalId;

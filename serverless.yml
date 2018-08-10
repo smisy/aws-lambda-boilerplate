@@ -6,35 +6,34 @@ provider:
   stage: ${opt:stage,'local'}
   region: us-east-1
   iamRoleStatements:
-    - Effect: "Allow"
+    - Effect: 'Allow'
       Action:
-        - "apigateway:GET"
+        - 'apigateway:GET'
       Resource:
-        - "arn:aws:apigateway:${self:provider.region}::/restapis*"
+        - 'arn:aws:apigateway:${self:provider.region}::/restapis*'
   environment:
     MONGODB_URI: ${file(./env.${self:provider.stage}.yml):MONGODB_URI}
 
 plugins:
-  - serverless-plugin-typescript
+  - serverless-webpack
   - serverless-offline
-  # - serverless-aws-documentation
+  - serverless-aws-documentation
   # - serverless-domain-manager
   - serverless-stack-output
 
 package:
-  include:
-    src/**/!(*.spec).js
+  include: src/**/*.js
   exclude:
     - test/**/*
 
 functions:
   authorize:
     handler: src/auth/auth.authorize
+    description: Validate User Token
     cors: true
   registerUser:
     handler: src/auth/auth.register
     description: Register a new User.
-    environment:
     events:
       - http:
           path: auth/register
@@ -49,7 +48,7 @@ functions:
               - statusCode: '200'
                 description: Returned when the operation is completed successfully.
                 responseModels:
-                  "application/json": RegisterOutput
+                  'application/json': RegisterOutput
               - ${file(./swagger/error-responses/bad-request.yml)}
               - ${file(./swagger/error-responses/forbidden.yml)}
               - ${file(./swagger/error-responses/not-found.yml)}
@@ -57,7 +56,6 @@ functions:
   loginUser:
     handler: src/auth/auth.login
     description: Login user and generate jwt token.
-    environment:
     events:
       - http:
           path: auth/login
@@ -72,7 +70,7 @@ functions:
               - statusCode: '200'
                 description: Returned when the operation is completed successfully.
                 responseModels:
-                  "application/json": UserData
+                  'application/json': UserData
               - ${file(./swagger/error-responses/bad-request.yml)}
               - ${file(./swagger/error-responses/forbidden.yml)}
               - ${file(./swagger/error-responses/not-found.yml)}
@@ -80,7 +78,6 @@ functions:
   getUserProfile:
     handler: src/users/user.getProfile
     description: Get User Profile
-    environment:
     events:
       - http:
           path: users/profile
@@ -96,7 +93,7 @@ functions:
               - statusCode: '200'
                 description: Returned when the operation is completed successfully.
                 responseModels:
-                  "application/json": UserData
+                  'application/json': UserData
               - ${file(./swagger/error-responses/bad-request.yml)}
               - ${file(./swagger/error-responses/forbidden.yml)}
               - ${file(./swagger/error-responses/not-found.yml)}
@@ -109,5 +106,8 @@ custom:
   #   certificateName: <your domain>
   #   stage: ${self:provider.stage}
   #   createRoute53Record: true
-  output:
-    file: .serverless/output.json
+  # output:
+  #   file: .serverless/output.json
+  webpack:
+    webpackConfig: 'webpack.config.ts'
+    includeModules: true # enable auto-packing of external modules

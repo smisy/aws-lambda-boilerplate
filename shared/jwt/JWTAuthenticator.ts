@@ -1,5 +1,4 @@
 import * as jwt from 'jsonwebtoken';
-import { Provides } from 'typescript-ioc';
 import { AuthUser } from '../../src/auth/models/auth-model';
 
 export interface Authenticator {
@@ -7,7 +6,6 @@ export interface Authenticator {
     authenticate(user: AuthUser): Promise<string>;
 }
 
-@Provides(JWTAuthenticator)
 export class JWTAuthenticator implements Authenticator {
     private secretKey: string = process.env.PRIVATE_KEY ||  '!@Secret@!';
     public async validate(token: string): Promise<AuthUser> {
@@ -15,7 +13,7 @@ export class JWTAuthenticator implements Authenticator {
 
         try {
             if (!token || token.length < 1) {
-                return undefined;
+                throw new Error('Invalid Token');
             }
 
             cert = Buffer.from(this.secretKey, 'utf8');
