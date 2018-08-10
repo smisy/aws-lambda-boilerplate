@@ -1,7 +1,3 @@
-import { Inject } from 'typescript-ioc';
-import * as mongoose from 'mongoose';
-
-// import { UserRegisterHandler } from './services/user-register-handler';
 import {
   LoginInputModel,
   LoginOutputModel,
@@ -27,17 +23,17 @@ import { UserRegisterHandler } from './services/user-register-handler';
 import { UserAuthorizerHandler } from './services/user-authorize-handler';
 
 export class AuthController {
-  static connection: mongoose.Mongoose;
-  @Inject private userRegister: UserRegisterHandler;
-  @Inject private userLogin: UserLoginHandler;
-  @Inject private userAuthorizer: UserAuthorizerHandler;
+  private userRegister: UserRegisterHandler;
+  private userLogin: UserLoginHandler;
+  private userAuthorizer: UserAuthorizerHandler;
 
   /**
    * @memberof AuthController
    */
-  constructor(
-    // tslint:disable-next-line:no-empty
-  ) {
+  constructor() {
+    this.userAuthorizer = new UserAuthorizerHandler();
+    this.userLogin = new UserLoginHandler();
+    this.userRegister = new UserRegisterHandler();
   }
 
   /**
@@ -49,7 +45,8 @@ export class AuthController {
    */
   public registerUser: APIGatewayProxyHandler = async (
     event: APIGatewayProxyEvent,
-    context: Context): Promise<APIGatewayProxyResult> => {
+    context: Context
+  ): Promise<APIGatewayProxyResult> => {
     const userData: RegisterInputModel = JSON.parse(event.body);
     let userOutput: RegisterOutputModel;
     await startMongoose();
@@ -73,7 +70,8 @@ export class AuthController {
    */
   public loginUser: APIGatewayProxyHandler = async (
     event: APIGatewayProxyEvent,
-    context: Context): Promise<APIGatewayProxyResult> => {
+    context: Context
+  ): Promise<APIGatewayProxyResult> => {
     const loginData: LoginInputModel = JSON.parse(event.body);
     let loginOutput: LoginOutputModel;
     await startMongoose();
@@ -97,7 +95,8 @@ export class AuthController {
    */
   public authorize: CustomAuthorizerHandler = async (
     event: CustomAuthorizerEvent,
-    context: Context): Promise<CustomAuthorizerResult> => {
+    context: Context
+  ): Promise<CustomAuthorizerResult> => {
     const authorization = event.authorizationToken || '';
     const authPrefix = 'Bearer ';
     await startMongoose();
@@ -120,16 +119,18 @@ export class AuthController {
     }
   }
 
-  private generatePolicy = (principalId: string, effect: string, resource: string): CustomAuthorizerResult => {
+  private generatePolicy = (
+    principalId: string,
+    effect: string,
+    resource: string
+  ): CustomAuthorizerResult => {
     const policyDocument = {} as PolicyDocument;
 
     if (effect && resource) {
       policyDocument.Version = '2012-10-17';
       policyDocument.Statement = [];
       const statementOne = {
-        Action: [
-          'execute-api:Invoke'
-        ],
+        Action: ['execute-api:Invoke'],
         Resource: resource,
         Effect: effect
       } as Statement;
