@@ -6,12 +6,15 @@ import * as nodeExternals from 'webpack-node-externals';
 
 // tslint:disable-next-line:no-var-requires
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const stage = slsw.lib.options.stage;
+
+const mode = stage === 'production' ? 'production' : 'development';
 
 const config: webpack.Configuration = {
-  mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
+  mode: mode,
   devtool: 'source-map',
   target: 'node',
-  // stats: 'minimal',
+  stats: 'minimal',
   entry: Object.keys(slsw.lib.entries).reduce(
     (entries: { [x: string]: any }, key) => {
       entries[key] = ['./source-map-install.js', slsw.lib.entries[key]];
