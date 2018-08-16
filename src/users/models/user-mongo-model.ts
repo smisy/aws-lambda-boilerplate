@@ -65,10 +65,12 @@ let UserSchema = new mongoose.Schema(
       required: 'Provider is required'
     },
     roles: {
-      type: [{
-        type: String,
-        enum: Object.keys(USER_TYPES)
-      }],
+      type: [
+        {
+          type: String,
+          enum: Object.keys(USER_TYPES)
+        }
+      ],
       default: [USER_TYPES.user],
       required: 'Please provide at least one role'
     },
@@ -99,7 +101,7 @@ let UserSchema = new mongoose.Schema(
       unique: true,
       sparse: true, // For this to work on a previously indexed field, the index must be dropped & the application restarted.
       lowercase: true,
-      default: undefined,
+      default: undefined
       // validate: [validateUsername, 'Please fill a valid phone number']
     }
   },
@@ -115,14 +117,14 @@ UserSchema.set('toJSON', {
 UserSchema.set('toObject', {
   virtuals: true
 });
-UserSchema.virtual('isOwner').get(function () {
+UserSchema.virtual('isOwner').get(function() {
   return this.type === 'owner';
 });
 
 /**
  * Hook a pre save method to hash the password
  */
-UserSchema.pre<UserDataMongoModel>('save', function (next) {
+UserSchema.pre<UserDataMongoModel>('save', function(next) {
   if (this.password && this.isModified('password')) {
     this.salt = crypto.randomBytes(16).toString('base64');
     this.password = this.hashPassword(this.password);
@@ -130,7 +132,9 @@ UserSchema.pre<UserDataMongoModel>('save', function (next) {
 
   this.wasNew = this.isNew;
   if (this.isNew) {
-    this.confirmationToken = `${crypto.randomBytes(16).toString('hex')}${this._id.valueOf()}`;
+    this.confirmationToken = `${crypto
+      .randomBytes(16)
+      .toString('hex')}${this._id.valueOf()}`;
   }
   this.roles = _.union(this.roles, [this.type]);
   next();
@@ -139,8 +143,12 @@ UserSchema.pre<UserDataMongoModel>('save', function (next) {
 /**
  * Hook a pre validate method to test the local password
  */
-UserSchema.pre<UserDataMongoModel>('validate', function (next) {
-  if (this.provider === 'local' && this.password && this.isModified('password')) {
+UserSchema.pre<UserDataMongoModel>('validate', function(next) {
+  if (
+    this.provider === 'local' &&
+    this.password &&
+    this.isModified('password')
+  ) {
     let result = owasp.test(this.password);
     if (result.errors.length) {
       let error = result.errors.join(' ');
@@ -150,7 +158,11 @@ UserSchema.pre<UserDataMongoModel>('validate', function (next) {
 
   let username = this.email || this.phone;
   if (!username || username.length === 0) {
-    this.invalidate('username', 'Please fill a valid email address or phone number', `${this.email} ${this.phone}`);
+    this.invalidate(
+      'username',
+      'Please fill a valid email address or phone number',
+      `${this.email} ${this.phone}`
+    );
   }
   next();
 });
@@ -158,9 +170,11 @@ UserSchema.pre<UserDataMongoModel>('validate', function (next) {
 /**
  * Create instance method for hashing a password
  */
-UserSchema.methods.hashPassword = function (password: string) {
+UserSchema.methods.hashPassword = function(password: string) {
   if (this.salt && password) {
-    return crypto.pbkdf2Sync(password, new Buffer(this.salt, 'base64'), 10000, 64, 'SHA1').toString('base64');
+    return crypto
+      .pbkdf2Sync(password, new Buffer(this.salt, 'base64'), 10000, 64, 'SHA1')
+      .toString('base64');
   } else {
     return password;
   }
@@ -169,15 +183,19 @@ UserSchema.methods.hashPassword = function (password: string) {
 /**
  * Create instance method for authenticating user
  */
-UserSchema.methods.authenticate = function (password: string) {
+UserSchema.methods.authenticate = function(password: string) {
   return this.password === this.hashPassword(password);
 };
 
 /**
  * Find possible not used username
  */
-UserSchema.statics.findUniqueUsername = async function (username: string, suffix: number, callback: Function) {
-  let possibleUsername = `${username.toLowerCase()}${(suffix || '')}`;
+UserSchema.statics.findUniqueUsername = async function(
+  username: string,
+  suffix: number,
+  callback: Function
+) {
+  let possibleUsername = `${username.toLowerCase()}${suffix || ''}`;
   try {
     let user = await this.findOne({
       username: possibleUsername
@@ -207,7 +225,7 @@ UserSchema.statics.generateRandomPassphrase = async () => {
     while (password.length < 20 || repeatingCharacters.test(password)) {
       // build the random password
       password = generatePassword.generate({
-        length: Math.floor(Math.random() * (20)) + 20, // randomize length between 20 and 40 characters
+        length: Math.floor(Math.random() * 20) + 20, // randomize length between 20 and 40 characters
         numbers: true,
         symbols: false,
         uppercase: true,
@@ -220,7 +238,11 @@ UserSchema.statics.generateRandomPassphrase = async () => {
 
     // Send the rejection back if the passphrase fails to pass the strength test
     if (owasp.test(password).errors.length) {
-      reject(new Error('An unexpected problem occured while generating the random passphrase'));
+      reject(
+        new Error(
+          'An unexpected problem occured while generating the random passphrase'
+        )
+      );
     } else {
       // resolve with the validated passphrase
       resolve(password);
@@ -228,6 +250,10 @@ UserSchema.statics.generateRandomPassphrase = async () => {
   });
 };
 
-// mongoose.model<UserDataMongoModel>('User', UserSchema);
+// @ts-ignore
+global.UserSchema =
+  // @ts-ignore
+  global.UserSchema || mongoose.model<UserDataMongoModel>('User', UserSchema);
 
-export default mongoose.model<UserDataMongoModel>('User', UserSchema);
+// @ts-ignore
+export default global.UserSchema;
