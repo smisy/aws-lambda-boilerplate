@@ -7,7 +7,6 @@ import policies from '../../../shared/policies';
 export class UserValidateRoleHandler implements CqrsServiceBase {
   constructor() {
     policies.forEach((policy: Policy) => {
-      console.log('setup policy:', policy);
       this.invokeRolesPolicies(policy);
     });
   }

@@ -106,7 +106,6 @@ export class AuthController {
     await startMongoose();
 
     try {
-      console.log('authorization:', authorization);
       let user: AuthUser;
       let token: string;
       if (authorization.startsWith(authPrefix)) {
@@ -122,8 +121,6 @@ export class AuthController {
           roles: user.roles,
           resources: resourcePath
         });
-        console.log('isRoleValid:', isRoleValid);
-
         if (!isRoleValid) {
           return this.generatePolicy(undefined, 'Deny', event.methodArn);
         }
