@@ -5,7 +5,8 @@
   "exclude": [
     "test/**/*",
     "**/*.d.ts",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "webpack.config.ts"
   ],
   "extension": [
     ".ts"
