@@ -16,7 +16,7 @@
     "lint": "tslint --project . --format verbose",
     "start": "serverless offline start --skipCacheInvalidation -s local",
     "pretest": "npm run clean",
-    "test": "nyc mocha",
+    "test": "npm run lint && nyc mocha",
     "serverless": "serverless",
     "tsc": "tsc",
     "tslint": "tslint",

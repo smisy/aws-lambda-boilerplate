@@ -39,7 +39,7 @@ export class UserValidateRoleHandler implements CqrsServiceBase {
     ]);
   }
 
-  private isAllowed(data: Policy): Promise<boolean> {
+  private async isAllowed(data: Policy): Promise<boolean> {
     console.log('isAllowed.input:', data);
     return new Promise<boolean>((resolve, reject) => {
       acl.areAnyRolesAllowed(
