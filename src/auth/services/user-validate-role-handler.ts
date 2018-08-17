@@ -1,25 +1,19 @@
 import { CqrsServiceBase } from '../../../shared/services/ioc-services';
 import { Policy } from '../models/auth-model';
 import * as Acl from 'acl';
-import * as fs from 'fs';
-import * as path from 'path';
 const acl = new Acl(new Acl.memoryBackend());
+import policies from '../../../shared/policies';
 
 export class UserValidateRoleHandler implements CqrsServiceBase {
   constructor() {
-    const policyFile = fs.readFileSync(
-      path.join(__dirname, '../../../shared/policies.json'),
-      'utf8'
-    );
-    const policies = JSON.parse(policyFile);
-    console.log('policies:', policies);
-    const invokeRolesPolicies = this.invokeRolesPolicies.bind(this);
     policies.forEach((policy: Policy) => {
-      invokeRolesPolicies(policy);
+      console.log('setup policy:', policy);
+      this.invokeRolesPolicies(policy);
     });
   }
 
   async handle(input: Policy): Promise<boolean> {
+    console.log('UserValidateRoleHandler.input:', input);
     try {
       // validate role
       const returnValue = await this.isAllowed(input);
@@ -31,17 +25,15 @@ export class UserValidateRoleHandler implements CqrsServiceBase {
   }
 
   private invokeRolesPolicies(
-    roles: string[],
-    resources: string,
-    permissions: string
+    policy: Policy
   ) {
     acl.allow([
       {
-        roles: roles,
+        roles: policy.roles,
         allows: [
           {
-            resources: resources,
-            permissions: permissions
+            resources: policy.resources,
+            permissions: policy.permissions
           }
         ]
       }
@@ -49,6 +41,7 @@ export class UserValidateRoleHandler implements CqrsServiceBase {
   }
 
   private isAllowed(data: Policy): Promise<boolean> {
+    console.log('isAllowed.input:', data);
     return new Promise<boolean>((resolve, reject) => {
       acl.areAnyRolesAllowed(
         data.roles,
@@ -56,6 +49,7 @@ export class UserValidateRoleHandler implements CqrsServiceBase {
         data.permissions,
         (err, allow) => {
           if (err) {
+            console.log('err:', err);
             return reject(new Error('Unexpected authorization error'));
           } else {
             if (allow) {

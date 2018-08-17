@@ -122,6 +122,7 @@ export class AuthController {
           roles: user.roles,
           resources: resourcePath
         });
+        console.log('isRoleValid:', isRoleValid);
 
         if (!isRoleValid) {
           return this.generatePolicy(undefined, 'Deny', event.methodArn);

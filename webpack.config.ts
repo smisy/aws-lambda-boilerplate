@@ -20,15 +20,15 @@ const config: webpack.Configuration = {
       entries[key] = ['./source-map-install.js', slsw.lib.entries[key]];
       return entries;
     },
-    {},
+    {}
   ),
   output: {
     libraryTarget: 'commonjs',
     path: path.join(__dirname, '.webpack'),
-    filename: '[name].js',
+    filename: '[name].js'
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
+    extensions: ['.js', '.jsx', '.json', '.ts', '.tsx']
   },
   module: {
     rules: [
@@ -36,10 +36,14 @@ const config: webpack.Configuration = {
         test: /\.ts(x?)$/,
         loader: 'ts-loader',
         options: {
-          transpileOnly: true,
-        },
+          transpileOnly: true
+        }
       },
-    ],
+      {
+        test: /\.json$/,
+        loader: 'json'
+      }
+    ]
   },
   plugins: [new ForkTsCheckerWebpackPlugin()],
   externals: [nodeExternals()]
