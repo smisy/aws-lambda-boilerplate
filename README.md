@@ -48,6 +48,10 @@ MONGODB_URL: mongodb://localhost:27017/aws-lambda
 | npm run deploy      | env.development.yml |
 | npm run deploy:prod | env.production.yml  |
 
+### User Roles
+
+You may have many roles in your project: user, moderator and admin. You may define your role policies in shared/Policies.ts
+
 ### Deploy to aws lambda services
 
 We need aws credential to deploy our aws-lambda functions to aws services.
