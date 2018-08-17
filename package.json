@@ -16,7 +16,7 @@
     "lint": "tslint --project . --format verbose",
     "start": "serverless offline start --skipCacheInvalidation -s local",
     "pretest": "npm run clean",
-    "test": "nyc mocha",
+    "test": "npm run lint && nyc mocha",
     "serverless": "serverless",
     "tsc": "tsc",
     "tslint": "tslint",
@@ -38,6 +38,7 @@
     "url": "https://github.com/ttruongatl/aws-lambda-boilerplate"
   },
   "devDependencies": {
+    "@types/acl": "^0.4.35",
     "@types/aws-lambda": "^8.10.11",
     "@types/chai": "^4.1.4",
     "@types/chance": "^1.0.1",
@@ -78,6 +79,7 @@
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
+    "acl": "^0.4.11",
     "generate-password": "^1.4.0",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.10",

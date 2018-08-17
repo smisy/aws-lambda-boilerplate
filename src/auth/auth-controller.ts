@@ -21,11 +21,14 @@ import {
 } from 'aws-lambda';
 import { UserRegisterHandler } from './services/user-register-handler';
 import { UserAuthorizerHandler } from './services/user-authorize-handler';
+import { UserValidateRoleHandler } from './services/user-validate-role-handler';
+import { utils } from '../../shared/utils';
 
 export class AuthController {
   private userRegister: UserRegisterHandler;
   private userLogin: UserLoginHandler;
   private userAuthorizer: UserAuthorizerHandler;
+  private userValidateRole: UserValidateRoleHandler;
 
   /**
    * @memberof AuthController
@@ -34,6 +37,7 @@ export class AuthController {
     this.userAuthorizer = new UserAuthorizerHandler();
     this.userLogin = new UserLoginHandler();
     this.userRegister = new UserRegisterHandler();
+    this.userValidateRole = new UserValidateRoleHandler();
   }
 
   /**
@@ -107,6 +111,19 @@ export class AuthController {
       if (authorization.startsWith(authPrefix)) {
         token = authorization.substr(authPrefix.length);
         user = await this.userAuthorizer.handle(token);
+
+        const { httpMethod, resourcePath } = utils.extractMethodAndPath(
+          event.methodArn
+        );
+
+        const isRoleValid = await this.userValidateRole.handle({
+          permissions: httpMethod,
+          roles: user.roles,
+          resources: resourcePath
+        });
+        if (!isRoleValid) {
+          return this.generatePolicy(undefined, 'Deny', event.methodArn);
+        }
         const policy = this.generatePolicy(user.id, 'Allow', event.methodArn);
         console.log('policy:', policy);
         return policy;
