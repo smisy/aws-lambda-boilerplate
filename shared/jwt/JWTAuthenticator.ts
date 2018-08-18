@@ -12,10 +12,6 @@ export class JWTAuthenticator implements Authenticator {
     let cert: Buffer;
 
     try {
-      if (!token || token.length < 1) {
-        throw new Error('Invalid Token');
-      }
-
       cert = Buffer.from(this.secretKey, 'utf8');
 
       const user: any = jwt.verify(token, cert);
