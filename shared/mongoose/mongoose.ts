@@ -28,6 +28,6 @@ export const startMongoose = (): Promise<mongoose.Mongoose> => {
   });
 };
 
-export const stoptMongoose = async (): Promise<void> => {
-  await mongoose.connection.close();
-};
+// export const stoptMongoose = async (): Promise<void> => {
+//   await mongoose.connection.close();
+// };
