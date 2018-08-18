@@ -19,10 +19,8 @@ export const startMongoose = (): Promise<mongoose.Mongoose> => {
       mongoURL,
       options, (err) => {
         if (err) {
-          console.log('Connect MongoDB Error:', err);
           return reject(err);
         }
-        console.log('Connected MongoDB:', mongoURL);
         return resolve();
       }
     );
@@ -31,7 +29,5 @@ export const startMongoose = (): Promise<mongoose.Mongoose> => {
 };
 
 export const stoptMongoose = async (): Promise<void> => {
-  await mongoose.connection.close(() => {
-    console.log('Stop Mongoose.');
-  });
+  await mongoose.connection.close();
 };

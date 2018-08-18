@@ -55,12 +55,9 @@ export class AuthController {
     let userOutput: RegisterOutputModel;
     await startMongoose();
     try {
-      console.log('UserController.registerUser:', userData);
       userOutput = await this.userRegister.handle(userData);
-      console.log('userOutput:', userOutput);
       return ResponseBuilder.ok(userOutput.user);
     } catch (error) {
-      console.log('Register User Error:', error);
       return ResponseBuilder.unprocessableEntity(error.message);
     }
   }
@@ -80,12 +77,9 @@ export class AuthController {
     let loginOutput: LoginOutputModel;
     await startMongoose();
     try {
-      console.log('UserController.loginData:', loginData);
       loginOutput = await this.userLogin.handle(loginData);
-      console.log('loginOutput:', loginOutput);
       return ResponseBuilder.ok(loginOutput);
     } catch (error) {
-      console.log('Login User Error:', error);
       return ResponseBuilder.unauthorized(error.message);
     }
   }
@@ -125,13 +119,11 @@ export class AuthController {
           return this.generatePolicy(undefined, 'Deny', event.methodArn);
         }
         const policy = this.generatePolicy(user.id, 'Allow', event.methodArn);
-        console.log('policy:', policy);
         return policy;
       } else {
         return this.generatePolicy(undefined, 'Deny', event.methodArn);
       }
     } catch (error) {
-      console.log('Authorizer User Error:', error);
       return this.generatePolicy(undefined, 'Deny', event.methodArn);
     }
   }

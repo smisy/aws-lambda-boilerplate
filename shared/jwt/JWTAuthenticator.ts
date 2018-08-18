@@ -22,7 +22,6 @@ export class JWTAuthenticator implements Authenticator {
 
       return new AuthUser(user);
     } catch (err) {
-      console.log('Verify Token Error: ', err);
       throw err;
     }
   }

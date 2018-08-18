@@ -10,7 +10,6 @@ export class UserAuthorizerHandler implements CqrsServiceBase {
       let returnValue = authUser;
       return returnValue;
     } catch (error) {
-      console.log('Authorizer User Service Error:', error);
       throw error;
     }
   }
