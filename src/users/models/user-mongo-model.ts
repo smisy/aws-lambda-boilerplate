@@ -117,9 +117,6 @@ UserSchema.set('toJSON', {
 UserSchema.set('toObject', {
   virtuals: true
 });
-UserSchema.virtual('isOwner').get(function() {
-  return this.type === 'owner';
-});
 
 /**
  * Hook a pre save method to hash the password
@@ -136,7 +133,6 @@ UserSchema.pre<UserDataMongoModel>('save', function(next) {
       .randomBytes(16)
       .toString('hex')}${this._id.valueOf()}`;
   }
-  this.roles = _.union(this.roles, [this.type]);
   next();
 });
 
