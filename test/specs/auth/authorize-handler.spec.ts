@@ -18,7 +18,7 @@ const loginData: LoginInputModel = {
 
 let authRequest: AuthRestRequest;
 let token: string;
-describe('Login and generate token', () => {
+describe('Authorization', () => {
   before(async () => {
     authRequest = new AuthRestRequest();
     await startMockgoose();
