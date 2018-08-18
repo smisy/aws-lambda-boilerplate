@@ -5,7 +5,6 @@
  */
 import * as mongoose from 'mongoose';
 import * as crypto from 'crypto';
-import * as generatePassword from 'generate-password';
 import * as owasp from 'owasp-password-strength-test';
 import * as _ from 'lodash';
 import { UserDataBase, USER_TYPES } from './user-model';
@@ -117,9 +116,6 @@ UserSchema.set('toJSON', {
 UserSchema.set('toObject', {
   virtuals: true
 });
-UserSchema.virtual('isOwner').get(function() {
-  return this.type === 'owner';
-});
 
 /**
  * Hook a pre save method to hash the password
@@ -136,7 +132,6 @@ UserSchema.pre<UserDataMongoModel>('save', function(next) {
       .randomBytes(16)
       .toString('hex')}${this._id.valueOf()}`;
   }
-  this.roles = _.union(this.roles, [this.type]);
   next();
 });
 
@@ -185,69 +180,6 @@ UserSchema.methods.hashPassword = function(password: string) {
  */
 UserSchema.methods.authenticate = function(password: string) {
   return this.password === this.hashPassword(password);
-};
-
-/**
- * Find possible not used username
- */
-UserSchema.statics.findUniqueUsername = async function(
-  username: string,
-  suffix: number,
-  callback: Function
-) {
-  let possibleUsername = `${username.toLowerCase()}${suffix || ''}`;
-  try {
-    let user = await this.findOne({
-      username: possibleUsername
-    });
-    if (!user) {
-      callback(possibleUsername);
-    } else {
-      return this.findUniqueUsername(username, (suffix || 0) + 1, callback);
-    }
-  } catch (error) {
-    throw error;
-  }
-};
-
-/**
- * Generates a random passphrase that passes the owasp test
- * Returns a promise that resolves with the generated passphrase, or rejects with an error if something goes wrong.
- * NOTE: Passphrases are only tested against the required owasp strength tests, and not the optional tests.
- */
-UserSchema.statics.generateRandomPassphrase = async () => {
-  return new Promise((resolve, reject) => {
-    let password = '';
-    let repeatingCharacters = new RegExp('(.)\\1{2,}', 'g');
-
-    // iterate until the we have a valid passphrase
-    // NOTE: Should rarely iterate more than once, but we need this to ensure no repeating characters are present
-    while (password.length < 20 || repeatingCharacters.test(password)) {
-      // build the random password
-      password = generatePassword.generate({
-        length: Math.floor(Math.random() * 20) + 20, // randomize length between 20 and 40 characters
-        numbers: true,
-        symbols: false,
-        uppercase: true,
-        excludeSimilarCharacters: true
-      });
-
-      // check if we need to remove any repeating characters
-      password = password.replace(repeatingCharacters, '');
-    }
-
-    // Send the rejection back if the passphrase fails to pass the strength test
-    if (owasp.test(password).errors.length) {
-      reject(
-        new Error(
-          'An unexpected problem occured while generating the random passphrase'
-        )
-      );
-    } else {
-      // resolve with the validated passphrase
-      resolve(password);
-    }
-  });
 };
 
 // @ts-ignore

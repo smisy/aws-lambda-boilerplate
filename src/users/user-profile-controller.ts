@@ -30,20 +30,15 @@ export default class UserProfileController {
     event: APIGatewayProxyEvent,
     context: Context
   ): Promise<APIGatewayProxyResult> => {
-    console.log('context:', context);
-    console.log('event:', event);
     const id = event.requestContext.authorizer.principalId;
 
     const user: GetUserProfileInput = { id };
     let userOutput: GetUserProfileOutput;
     await startMongoose();
     try {
-      console.log('UserProfileController.getProfile:', user);
       userOutput = await this.getUsetProfileHandler.handle(user);
-      console.log('userOutput:', userOutput);
       return ResponseBuilder.ok(userOutput.user);
     } catch (error) {
-      console.log('Register User Error:', error);
       return ResponseBuilder.unprocessableEntity(error.message);
     }
   }

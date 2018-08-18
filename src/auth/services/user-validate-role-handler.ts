@@ -12,13 +12,11 @@ export class UserValidateRoleHandler implements CqrsServiceBase {
   }
 
   async handle(input: Policy): Promise<boolean> {
-    console.log('UserValidateRoleHandler.input:', input);
     try {
       // validate role
       const returnValue = await this.isAllowed(input);
       return returnValue;
     } catch (error) {
-      console.log('Register User Service Error:', error);
       throw error;
     }
   }
@@ -40,7 +38,6 @@ export class UserValidateRoleHandler implements CqrsServiceBase {
   }
 
   private async isAllowed(data: Policy): Promise<boolean> {
-    console.log('isAllowed.input:', data);
     return new Promise<boolean>((resolve, reject) => {
       acl.areAnyRolesAllowed(
         data.roles,
@@ -48,7 +45,6 @@ export class UserValidateRoleHandler implements CqrsServiceBase {
         data.permissions,
         (err, allow) => {
           if (err) {
-            console.log('err:', err);
             return reject(new Error('Unexpected authorization error'));
           } else {
             if (allow) {

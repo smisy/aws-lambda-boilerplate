@@ -6,7 +6,8 @@
     "test/**/*",
     "**/*.d.ts",
     "**/*.spec.ts",
-    "webpack.config.ts"
+    "webpack.config.ts",
+    "shared/services/ioc-services.ts"
   ],
   "extension": [
     ".ts"

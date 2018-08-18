@@ -12,12 +12,6 @@ const extractMethodAndPath = (
   //   http://docs.aws.amazon.com/apigateway/latest/developerguide/use-custom-authorizer.html
   //
 
-  // Check if the value of 'arn' is available just in case.
-  if (!arn) {
-    // HTTP method and a resource path are not available.
-    return { httpMethod: undefined, resourcePath: undefined };
-  }
-
   let arnElements = arn.split(':', 6);
   let [apiId, stage, httpMethod, ...rest] = arnElements[5].split('/');
   console.log('apiId:', apiId);

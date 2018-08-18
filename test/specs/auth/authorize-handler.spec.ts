@@ -18,7 +18,7 @@ const loginData: LoginInputModel = {
 
 let authRequest: AuthRestRequest;
 let token: string;
-describe('Login and generate token', () => {
+describe('Authorization', () => {
   before(async () => {
     authRequest = new AuthRestRequest();
     await startMockgoose();
@@ -37,7 +37,7 @@ describe('Login and generate token', () => {
   });
 
   it('should return principalId as user Id for authorize request with invalid token', async () => {
-    let response = await authRequest.callAuthorizeAPI('12345678');
+    let response = await authRequest.callAuthorizeAPI('Bearer 12345678');
     response.should.have.property('principalId').and.equal(undefined);
   });
 
