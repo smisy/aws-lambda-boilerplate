@@ -50,7 +50,16 @@ MONGODB_URL: mongodb://localhost:27017/aws-lambda
 
 ### User Roles
 
-You may have many roles in your project: user, moderator and admin. You may define your role policies in shared/Policies.ts
+You may have many roles in your project: user, moderator and admin. You may define your role policies in `shared/Policies.ts`
+```
+export default [
+  {
+    roles: ['user'],
+    resources: '/users/profile',
+    permissions: 'GET'
+  }
+];
+```
 
 ### Deploy to aws lambda services
 
