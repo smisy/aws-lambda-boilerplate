@@ -3,8 +3,8 @@ import { UserDataModel } from '../../users/models/user-model';
 import { OrganizationDataModel } from './organization-model';
 
 export enum ORGANIZATION_ROLES {
-  user = 'organization_user',
-  admin = 'organization_group'
+  user = 'user',
+  admin = 'admin'
 }
 
 export class OrganizationUserRoleDataBase extends ApiModel {

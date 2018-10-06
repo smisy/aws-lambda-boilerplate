@@ -1,8 +1,9 @@
 import * as mongoose from 'mongoose';
 import { OrganizationDataBase } from './organization-model';
 
-export interface OrganizationDataMongoModel extends OrganizationDataBase, mongoose.Document {
-}
+export interface OrganizationDataMongoModel
+  extends OrganizationDataBase,
+    mongoose.Document {}
 /**
  * Organization Schema
  */
@@ -39,14 +40,6 @@ OrganizationSchema.set('toObject', {
   virtuals: true
 });
 
-/**
- * Hook a pre validate method to generate organization key
- */
-OrganizationSchema.pre<OrganizationDataMongoModel>('validate', function(next) {
-  this.key = generateRandomKey(this.name);
-  next();
-});
-
 const generateRandomKey = (baseString: string) => {
   let key;
   if (baseString) {
@@ -56,10 +49,22 @@ const generateRandomKey = (baseString: string) => {
   return key;
 };
 
+/**
+ * Hook a pre validate method to generate organization key
+ */
+OrganizationSchema.pre<OrganizationDataMongoModel>('validate', function(next) {
+  this.key = generateRandomKey(this.name);
+  next();
+});
+
 // @ts-ignore
 global.OrganizationSchema =
   // @ts-ignore
-  global.OrganizationSchema || mongoose.model<OrganizationDataMongoModel>('Organization', OrganizationSchema);
+  global.OrganizationSchema ||
+  mongoose.model<OrganizationDataMongoModel>(
+    'Organization',
+    OrganizationSchema
+  );
 
 // @ts-ignore
 export default global.OrganizationSchema;
