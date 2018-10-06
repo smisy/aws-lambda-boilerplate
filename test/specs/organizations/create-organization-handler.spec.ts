@@ -47,11 +47,8 @@ describe('Create Organization', () => {
     );
     response.statusCode.should.be.equal(200);
     body.should.have.property('organization');
-    body.should.have.property('organizationUserRole');
     const organization = body.organization;
     organization.should.have.property('id');
-    const organizationUserRole = body.organizationUserRole;
-    organizationUserRole.should.have.property('id');
   });
 
   it('should return 422 create new organization with missing name', async () => {

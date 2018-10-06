@@ -1,5 +1,4 @@
 import { ApiModel } from '../../../shared/models/api-model';
-import { OrganizationUserRoleDataModel } from './organization-user-role-model';
 
 export class OrganizationDataBase extends ApiModel {
   key: string;
@@ -19,5 +18,4 @@ export class CreateOrganizationInputModel extends ApiModel {
 
 export class CreateOrganizationOutputModel extends ApiModel {
   organization: OrganizationDataModel;
-  organizationUserRole: OrganizationUserRoleDataModel;
 }

@@ -11,8 +11,7 @@ import {
 } from './models/organization-model';
 import { startMongoose } from '../../shared/mongoose/mongoose';
 import {
-  CreateOrganizationUserRoleInputModel,
-  CreateOrganizationUserRoleOutputModel
+  CreateOrganizationUserRoleInputModel
 } from './models/organization-user-role-model';
 import { CreateOrganizationUserRoleCommandHandlerHandler } from './services/create-organization-user-role-command-handler';
 import { ResponseBuilder } from '../../shared/response-builder';
@@ -44,7 +43,6 @@ export default class OrganizationController {
       event.body
     );
     let organizationOutput: CreateOrganizationOutputModel;
-    let organizationUserRoleOutput: CreateOrganizationUserRoleOutputModel;
     await startMongoose();
     try {
       organizationOutput = await this.createOrganizationHandler.handle(
@@ -54,11 +52,10 @@ export default class OrganizationController {
         user: event.requestContext.authorizer.principalId,
         organization: organizationOutput.organization.id
       };
-      organizationUserRoleOutput = await this.createOrganizationUserRoleHandler.handle(
+      await this.createOrganizationUserRoleHandler.handle(
         organizationUserRole
       );
       return ResponseBuilder.ok({
-        ...organizationUserRoleOutput,
         ...organizationOutput
       });
     } catch (error) {
