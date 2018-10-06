@@ -1,26 +1,26 @@
-import OrganizationUserRoleModel from '../models/organization-user-role-mongo-model';
+import OrganizationUserModel from '../models/organization-user-role-mongo-model';
 import { CqrsServiceBase } from '../../../shared/services/ioc-services';
 import {
-  CreateOrganizationUserRoleInputModel,
-  CreateOrganizationUserRoleOutputModel,
+  CreateOrganizationUserInputModel,
+  CreateOrganizationUserOutputModel,
   ORGANIZATION_ROLES
 } from '../models/organization-user-role-model';
 
-export class CreateOrganizationUserRoleCommandHandlerHandler
+export class CreateOrganizationUserCommandHandlerHandler
   implements CqrsServiceBase {
   async handle(
-    input: CreateOrganizationUserRoleInputModel
-  ): Promise<CreateOrganizationUserRoleOutputModel> {
+    input: CreateOrganizationUserInputModel
+  ): Promise<CreateOrganizationUserOutputModel> {
     try {
       // set admin role
-      let organizationUserRole = new OrganizationUserRoleModel({
+      let organizationUser = new OrganizationUserModel({
         ...input,
         roles: [ORGANIZATION_ROLES.organization_admin]
       });
-      let newOrganizationUserRole = await organizationUserRole.save();
+      let newOrganizationUser = await organizationUser.save();
 
-      let returnValue: CreateOrganizationUserRoleOutputModel = {
-        organizationUserRole: newOrganizationUserRole.toJSON()
+      let returnValue: CreateOrganizationUserOutputModel = {
+        organizationUser: newOrganizationUser.toJSON()
       };
       return returnValue;
     } catch (error) {

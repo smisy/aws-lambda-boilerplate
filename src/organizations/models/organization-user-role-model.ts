@@ -7,21 +7,21 @@ export enum ORGANIZATION_ROLES {
   organization_admin = 'organization_admin'
 }
 
-export class OrganizationUserRoleDataBase extends ApiModel {
+export class OrganizationUserDataBase extends ApiModel {
   user: string | UserDataModel;
   organization: string | OrganizationDataModel;
   organizationRoles: ORGANIZATION_ROLES[];
 }
 
-export class OrganizationUserRoleDataModel extends OrganizationUserRoleDataBase {
+export class OrganizationUserDataModel extends OrganizationUserDataBase {
   id?: string;
 }
 
-export class CreateOrganizationUserRoleInputModel extends ApiModel {
+export class CreateOrganizationUserInputModel extends ApiModel {
   user: string;
   organization: string;
 }
 
-export class CreateOrganizationUserRoleOutputModel extends ApiModel {
-  organizationUserRole: OrganizationUserRoleDataBase;
+export class CreateOrganizationUserOutputModel extends ApiModel {
+  organizationUser: OrganizationUserDataBase;
 }

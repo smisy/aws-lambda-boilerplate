@@ -11,21 +11,21 @@ import {
 } from './models/organization-model';
 import { startMongoose } from '../../shared/mongoose/mongoose';
 import {
-  CreateOrganizationUserRoleInputModel
+  CreateOrganizationUserInputModel
 } from './models/organization-user-role-model';
-import { CreateOrganizationUserRoleCommandHandlerHandler } from './services/create-organization-user-role-command-handler';
+import { CreateOrganizationUserCommandHandlerHandler } from './services/create-organization-user-role-command-handler';
 import { ResponseBuilder } from '../../shared/response-builder';
 
 export default class OrganizationController {
   private createOrganizationHandler: CreateOrganizationCommandHandlerHandler;
-  private createOrganizationUserRoleHandler: CreateOrganizationUserRoleCommandHandlerHandler;
+  private createOrganizationUserHandler: CreateOrganizationUserCommandHandlerHandler;
 
   /**
    * @memberof OrganizationController
    */
   constructor() {
     this.createOrganizationHandler = new CreateOrganizationCommandHandlerHandler();
-    this.createOrganizationUserRoleHandler = new CreateOrganizationUserRoleCommandHandlerHandler();
+    this.createOrganizationUserHandler = new CreateOrganizationUserCommandHandlerHandler();
   }
 
   /**
@@ -48,12 +48,12 @@ export default class OrganizationController {
       organizationOutput = await this.createOrganizationHandler.handle(
         organizationData
       );
-      const organizationUserRole: CreateOrganizationUserRoleInputModel = {
+      const organizationUser: CreateOrganizationUserInputModel = {
         user: event.requestContext.authorizer.principalId,
         organization: organizationOutput.organization.id
       };
-      await this.createOrganizationUserRoleHandler.handle(
-        organizationUserRole
+      await this.createOrganizationUserHandler.handle(
+        organizationUser
       );
       return ResponseBuilder.ok({
         ...organizationOutput
