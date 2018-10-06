@@ -29,7 +29,7 @@ export class JWTAuthenticator implements Authenticator {
     return jwt.sign(
       {
         id: user.id,
-        roles: user.roles
+        globalRoles: user.globalRoles
       } as Object,
       cert,
       {

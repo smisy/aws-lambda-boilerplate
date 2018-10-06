@@ -7,7 +7,7 @@ import * as mongoose from 'mongoose';
 import * as crypto from 'crypto';
 import * as owasp from 'owasp-password-strength-test';
 import * as _ from 'lodash';
-import { UserDataBase, USER_TYPES } from './user-model';
+import { UserDataBase, GLOBAL_ROLES } from './user-model';
 
 owasp.config({
   allowPassphrases: true,
@@ -63,14 +63,14 @@ let UserSchema = new mongoose.Schema(
       type: String,
       required: 'Provider is required'
     },
-    roles: {
+    globalRoles: {
       type: [
         {
           type: String,
-          enum: Object.keys(USER_TYPES)
+          enum: Object.keys(GLOBAL_ROLES)
         }
       ],
-      default: [USER_TYPES.user],
+      default: [GLOBAL_ROLES.global_user],
       required: 'Please provide at least one role'
     },
     /* For reset password */

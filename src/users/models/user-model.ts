@@ -1,8 +1,8 @@
 import ApiModel from '../../../shared/models/api-model';
 
-export enum USER_TYPES {
-    user = 'user',
-    admin = 'admin',
+export enum GLOBAL_ROLES {
+    global_user = 'global_user',
+    global_admin = 'global_admin',
 }
 
 export class UserDataBase extends ApiModel {
@@ -15,7 +15,7 @@ export class UserDataBase extends ApiModel {
     provider: string;
     providerData: object;
     additionalProvidersData: object;
-    roles: USER_TYPES[];
+    globalRoles: GLOBAL_ROLES[];
     updated: Date;
     created: Date;
     /* For reset password */
@@ -23,7 +23,6 @@ export class UserDataBase extends ApiModel {
     resetPasswordExpires: Date;
     confirmationToken: string;
     confirmAt: Date;
-    type: USER_TYPES;
     deleted: boolean;
     skypeId: string;
     timezone: string;

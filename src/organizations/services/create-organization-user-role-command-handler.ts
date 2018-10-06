@@ -15,7 +15,7 @@ export class CreateOrganizationUserRoleCommandHandlerHandler
       // set admin role
       let organizationUserRole = new OrganizationUserRoleModel({
         ...input,
-        roles: [ORGANIZATION_ROLES.admin, ORGANIZATION_ROLES.user]
+        roles: [ORGANIZATION_ROLES.organization_admin]
       });
       let newOrganizationUserRole = await organizationUserRole.save();
 

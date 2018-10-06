@@ -27,7 +27,7 @@ export class UserLoginHandler implements CqrsServiceBase {
       const jwtAuth = new JWTAuthenticator();
       let auth: AuthUser = {
         id: user.id,
-        roles: user.roles
+        globalRoles: user.globalRoles
       };
 
       const token = await jwtAuth.authenticate(auth);

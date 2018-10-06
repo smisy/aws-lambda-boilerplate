@@ -2,7 +2,7 @@ import { Policy } from '../src/auth/models/auth-model';
 
 const polices: Policy[] = [
   {
-    roles: ['user'],
+    roles: ['global_user'],
     resources: '/users/profile',
     permissions: 'GET'
   }

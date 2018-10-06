@@ -1,5 +1,5 @@
 import ApiModel from '../../../shared/models/api-model';
-import { UserDataModel, USER_TYPES } from '../../users/models/user-model';
+import { UserDataModel, GLOBAL_ROLES } from '../../users/models/user-model';
 
 class LoginInputModel extends ApiModel {
   public userName: string;
@@ -23,7 +23,7 @@ class RegisterOutputModel extends ApiModel {
 
 export class AuthUser extends ApiModel {
   id: string;
-  roles: USER_TYPES[];
+  globalRoles: GLOBAL_ROLES[];
 }
 
 export class Policy extends ApiModel {

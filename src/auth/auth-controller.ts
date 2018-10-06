@@ -112,7 +112,7 @@ export class AuthController {
 
         const isRoleValid = await this.userValidateRole.handle({
           permissions: httpMethod,
-          roles: user.roles,
+          roles: user.globalRoles,
           resources: resourcePath
         });
         if (!isRoleValid) {

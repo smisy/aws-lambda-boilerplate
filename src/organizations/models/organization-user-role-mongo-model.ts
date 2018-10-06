@@ -22,14 +22,14 @@ let OrganizationUserRoleSchema = new mongoose.Schema(
       ref: 'Organization',
       required: true
     },
-    roles: {
+    organizationRoles: {
       type: [
         {
           type: String,
           enum: Object.keys(ORGANIZATION_ROLES)
         }
       ],
-      default: [ORGANIZATION_ROLES.user],
+      default: [ORGANIZATION_ROLES.organization_user],
       required: 'Please provide at least one role'
     }
   },
