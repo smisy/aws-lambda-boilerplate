@@ -5,10 +5,12 @@ import {
   CreateOrganizationUserOutputModel,
   ORGANIZATION_ROLES
 } from '../models/organization-user-role-model';
+import { Context } from 'aws-lambda';
 
 export class CreateOrganizationUserCommandHandlerHandler
   implements CqrsServiceBase {
   async handle(
+    context: Context,
     input: CreateOrganizationUserInputModel
   ): Promise<CreateOrganizationUserOutputModel> {
     try {

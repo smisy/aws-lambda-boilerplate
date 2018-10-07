@@ -2,10 +2,12 @@ import { CqrsServiceBase } from '../../../shared/services/ioc-services';
 import UserModel from '../../users/models/user-mongo-model';
 import { LoginInputModel, LoginOutputModel, AuthUser } from '../models/auth-model';
 import { JWTAuthenticator } from '../../../shared/jwt/JWTAuthenticator';
+import { Context } from 'aws-lambda';
 
 export class UserLoginHandler implements CqrsServiceBase {
 
   async handle(
+    context: Context,
     input: LoginInputModel
   ): Promise<LoginOutputModel> {
     try {

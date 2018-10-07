@@ -17,7 +17,8 @@ import {
   CustomAuthorizerEvent,
   CustomAuthorizerResult,
   PolicyDocument,
-  Statement
+  Statement,
+  AuthResponseContext
 } from 'aws-lambda';
 import { UserRegisterHandler } from './services/user-register-handler';
 import { UserAuthorizerHandler } from './services/user-authorize-handler';
@@ -55,7 +56,7 @@ export class AuthController {
     let userOutput: RegisterOutputModel;
     await startMongoose();
     try {
-      userOutput = await this.userRegister.handle(userData);
+      userOutput = await this.userRegister.handle(context, userData);
       return ResponseBuilder.ok(userOutput.user);
     } catch (error) {
       return ResponseBuilder.unprocessableEntity(error.message);
@@ -77,7 +78,7 @@ export class AuthController {
     let loginOutput: LoginOutputModel;
     await startMongoose();
     try {
-      loginOutput = await this.userLogin.handle(loginData);
+      loginOutput = await this.userLogin.handle(context, loginData);
       return ResponseBuilder.ok(loginOutput);
     } catch (error) {
       return ResponseBuilder.unauthorized(error.message);
@@ -104,13 +105,13 @@ export class AuthController {
       let token: string;
       if (authorization.startsWith(authPrefix)) {
         token = authorization.substr(authPrefix.length);
-        user = await this.userAuthorizer.handle(token);
+        user = await this.userAuthorizer.handle(context, token);
 
         const { httpMethod, resourcePath } = utils.extractMethodAndPath(
           event.methodArn
         );
 
-        const isRoleValid = await this.userValidateRole.handle({
+        const isRoleValid = await this.userValidateRole.handle(context, {
           permissions: httpMethod,
           roles: user.globalRoles,
           resources: resourcePath
@@ -118,7 +119,17 @@ export class AuthController {
         if (!isRoleValid) {
           return this.generatePolicy(undefined, 'Deny', event.methodArn);
         }
-        const policy = this.generatePolicy(user.id, 'Allow', event.methodArn);
+        console.log('user:', user);
+        let authorizedContext: AuthResponseContext = {
+          user
+        };
+
+        const policy = this.generatePolicy(
+          user.id,
+          'Allow',
+          event.methodArn,
+          authorizedContext
+        );
         return policy;
       } else {
         return this.generatePolicy(undefined, 'Deny', event.methodArn);
@@ -131,7 +142,8 @@ export class AuthController {
   private generatePolicy = (
     principalId: string,
     effect: string,
-    resource: string
+    resource: string,
+    context?: AuthResponseContext
   ): CustomAuthorizerResult => {
     const policyDocument = {} as PolicyDocument;
 
@@ -147,9 +159,10 @@ export class AuthController {
     }
     const authResponse: CustomAuthorizerResult = {
       principalId,
-      policyDocument
+      policyDocument,
+      context: context
     };
-
+    console.log({ authResponse });
     return authResponse;
   }
 }

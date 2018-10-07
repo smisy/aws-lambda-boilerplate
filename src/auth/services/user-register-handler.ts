@@ -1,10 +1,12 @@
 import { CqrsServiceBase } from '../../../shared/services/ioc-services';
 import UserModel from '../../users/models/user-mongo-model';
 import { RegisterInputModel, RegisterOutputModel } from '../models/auth-model';
+import { Context } from 'aws-lambda';
 
 export class UserRegisterHandler implements CqrsServiceBase {
 
     async handle(
+        context: Context,
         input: RegisterInputModel
     ): Promise<RegisterOutputModel> {
         try {

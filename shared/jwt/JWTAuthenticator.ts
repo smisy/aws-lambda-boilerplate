@@ -13,10 +13,8 @@ export class JWTAuthenticator implements Authenticator {
 
     try {
       cert = Buffer.from(this.secretKey, 'utf8');
-
-      const user: any = jwt.verify(token, cert);
-
-      return new AuthUser(user);
+      const user: AuthUser = jwt.verify(token, cert) as AuthUser;
+      return user;
     } catch (err) {
       throw err;
     }

@@ -10,9 +10,7 @@ import {
   CreateOrganizationInputModel
 } from './models/organization-model';
 import { startMongoose } from '../../shared/mongoose/mongoose';
-import {
-  CreateOrganizationUserInputModel
-} from './models/organization-user-role-model';
+import { CreateOrganizationUserInputModel } from './models/organization-user-role-model';
 import { CreateOrganizationUserCommandHandlerHandler } from './services/create-organization-user-role-command-handler';
 import { ResponseBuilder } from '../../shared/response-builder';
 
@@ -46,6 +44,7 @@ export default class OrganizationController {
     await startMongoose();
     try {
       organizationOutput = await this.createOrganizationHandler.handle(
+        context,
         organizationData
       );
       const organizationUser: CreateOrganizationUserInputModel = {
@@ -53,6 +52,7 @@ export default class OrganizationController {
         organization: organizationOutput.organization.id
       };
       await this.createOrganizationUserHandler.handle(
+        context,
         organizationUser
       );
       return ResponseBuilder.ok({
