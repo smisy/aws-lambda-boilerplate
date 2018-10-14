@@ -1,4 +1,4 @@
-import { CreateOrganizationCommandHandlerHandler } from './services/create-organization-command-handler';
+import { CreateOrganizationCommandHandler } from './services/create-organization-command-handler';
 import {
   APIGatewayProxyHandler,
   APIGatewayProxyEvent,
@@ -10,20 +10,20 @@ import {
   CreateOrganizationInputModel
 } from './models/organization-model';
 import { startMongoose } from '../../shared/mongoose/mongoose';
-import { CreateOrganizationUserInputModel } from './models/organization-user-role-model';
-import { CreateOrganizationUserCommandHandlerHandler } from './services/create-organization-user-role-command-handler';
+import { CreateOrganizationUserInputModel } from '../users/models/organization-user-model';
+import { CreateOrganizationUserCommandHandler } from '../users/services/create-organization-user-command-handler';
 import { ResponseBuilder } from '../../shared/response-builder';
 
 export default class OrganizationController {
-  private createOrganizationHandler: CreateOrganizationCommandHandlerHandler;
-  private createOrganizationUserHandler: CreateOrganizationUserCommandHandlerHandler;
+  private createOrganizationHandler: CreateOrganizationCommandHandler;
+  private createOrganizationUserHandler: CreateOrganizationUserCommandHandler;
 
   /**
    * @memberof OrganizationController
    */
   constructor() {
-    this.createOrganizationHandler = new CreateOrganizationCommandHandlerHandler();
-    this.createOrganizationUserHandler = new CreateOrganizationUserCommandHandlerHandler();
+    this.createOrganizationHandler = new CreateOrganizationCommandHandler();
+    this.createOrganizationUserHandler = new CreateOrganizationUserCommandHandler();
   }
 
   /**
@@ -44,7 +44,7 @@ export default class OrganizationController {
     await startMongoose();
     try {
       organizationOutput = await this.createOrganizationHandler.handle(
-        context,
+        event.requestContext,
         organizationData
       );
       const organizationUser: CreateOrganizationUserInputModel = {
@@ -52,9 +52,12 @@ export default class OrganizationController {
         organization: organizationOutput.organization.id
       };
       await this.createOrganizationUserHandler.handle(
-        context,
+        event.requestContext,
         organizationUser
       );
+
+      // update user model
+
       return ResponseBuilder.ok({
         ...organizationOutput
       });

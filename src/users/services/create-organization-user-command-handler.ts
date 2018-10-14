@@ -1,16 +1,16 @@
-import OrganizationUserModel from '../models/organization-user-role-mongo-model';
+import OrganizationUserModel from '../models/organization-user-mongo-model';
 import { CqrsServiceBase } from '../../../shared/services/ioc-services';
 import {
   CreateOrganizationUserInputModel,
   CreateOrganizationUserOutputModel,
   ORGANIZATION_ROLES
-} from '../models/organization-user-role-model';
-import { Context } from 'aws-lambda';
+} from '../models/organization-user-model';
+import { APIGatewayEventRequestContext } from 'aws-lambda';
 
-export class CreateOrganizationUserCommandHandlerHandler
+export class CreateOrganizationUserCommandHandler
   implements CqrsServiceBase {
   async handle(
-    context: Context,
+    context: APIGatewayEventRequestContext,
     input: CreateOrganizationUserInputModel
   ): Promise<CreateOrganizationUserOutputModel> {
     try {

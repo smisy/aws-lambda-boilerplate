@@ -1,12 +1,12 @@
 import { CqrsServiceBase } from '../../../shared/services/ioc-services';
 import UserModel from '../../users/models/user-mongo-model';
 import { GetUserProfileInput, GetUserProfileOutput, UserProfileDataModel } from '../models/user-model';
-import { Context } from 'aws-lambda';
+import { APIGatewayEventRequestContext } from 'aws-lambda';
 
 export class GetUserProfileHandler implements CqrsServiceBase {
 
   async handle(
-    context: Context,
+    context: APIGatewayEventRequestContext,
     input: GetUserProfileInput
   ): Promise<GetUserProfileOutput> {
     try {

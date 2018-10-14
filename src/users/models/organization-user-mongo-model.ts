@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import {
   OrganizationUserDataBase,
   ORGANIZATION_ROLES
-} from './organization-user-role-model';
+} from './organization-user-model';
 
 export interface OrganizationUserDataMongoModel
   extends OrganizationUserDataBase,

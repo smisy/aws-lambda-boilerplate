@@ -1,4 +1,5 @@
 import ApiModel from '../../../shared/models/api-model';
+import { OrganizationUserDataModel } from './organization-user-model';
 
 export enum GLOBAL_ROLES {
     global_user = 'global_user',
@@ -13,8 +14,6 @@ export class UserDataBase extends ApiModel {
     salt: string;
     profileImageURL: string;
     provider: string;
-    providerData: object;
-    additionalProvidersData: object;
     globalRoles: GLOBAL_ROLES[];
     updated: Date;
     created: Date;
@@ -24,9 +23,9 @@ export class UserDataBase extends ApiModel {
     confirmationToken: string;
     confirmAt: Date;
     deleted: boolean;
-    skypeId: string;
     timezone: string;
     phone: string;
+    organizationProfile: OrganizationUserDataModel[] | string[];
 }
 
 export class UserDataModel extends UserDataBase {
@@ -40,6 +39,7 @@ export class UserProfileDataModel extends ApiModel {
     displayName: string;
     profileImageURL: string;
     timezone: string;
+    organizationProfile: OrganizationUserDataModel[] | string[];
 }
 
 export class GetUserProfileInput extends ApiModel {

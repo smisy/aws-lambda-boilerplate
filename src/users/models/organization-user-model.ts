@@ -1,6 +1,6 @@
 import { ApiModel } from '../../../shared/models/api-model';
-import { UserDataModel } from '../../users/models/user-model';
-import { OrganizationDataModel } from './organization-model';
+import { UserDataModel, UserProfileDataModel } from './user-model';
+import { OrganizationDataModel } from '../../organizations/models/organization-model';
 
 export enum ORGANIZATION_ROLES {
   organization_user = 'organization_user',
@@ -24,4 +24,12 @@ export class CreateOrganizationUserInputModel extends ApiModel {
 
 export class CreateOrganizationUserOutputModel extends ApiModel {
   organizationUser: OrganizationUserDataBase;
+}
+
+export class AddOrganizationToUserProfileInputModel extends ApiModel {
+  organizationId: string;
+}
+
+export class AddOrganizationToUserProfileOutputModel extends ApiModel {
+  user: UserProfileDataModel;
 }

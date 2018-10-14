@@ -56,7 +56,7 @@ export class AuthController {
     let userOutput: RegisterOutputModel;
     await startMongoose();
     try {
-      userOutput = await this.userRegister.handle(context, userData);
+      userOutput = await this.userRegister.handle(event.requestContext, userData);
       return ResponseBuilder.ok(userOutput.user);
     } catch (error) {
       return ResponseBuilder.unprocessableEntity(error.message);
@@ -78,7 +78,7 @@ export class AuthController {
     let loginOutput: LoginOutputModel;
     await startMongoose();
     try {
-      loginOutput = await this.userLogin.handle(context, loginData);
+      loginOutput = await this.userLogin.handle(event.requestContext, loginData);
       return ResponseBuilder.ok(loginOutput);
     } catch (error) {
       return ResponseBuilder.unauthorized(error.message);
@@ -105,15 +105,15 @@ export class AuthController {
       let token: string;
       if (authorization.startsWith(authPrefix)) {
         token = authorization.substr(authPrefix.length);
-        user = await this.userAuthorizer.handle(context, token);
+        user = await this.userAuthorizer.handle(event.requestContext, token);
 
         const { httpMethod, resourcePath } = utils.extractMethodAndPath(
           event.methodArn
         );
 
-        const isRoleValid = await this.userValidateRole.handle(context, {
+        const isRoleValid = await this.userValidateRole.handle(event.requestContext, {
           permissions: httpMethod,
-          roles: user.globalRoles,
+          roles: [...user.globalRoles],
           resources: resourcePath
         });
         if (!isRoleValid) {

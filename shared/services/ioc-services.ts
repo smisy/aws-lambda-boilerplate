@@ -1,17 +1,17 @@
-import { Context } from 'aws-lambda';
+import { APIGatewayEventRequestContext } from 'aws-lambda';
 
 /**
  * To be used as an "interface", in case you want to be able to use different implementations.
  */
 export abstract class CqrsServiceBase {
-    abstract handle(context: Context, input: Object ): Object;
+    abstract handle(context: APIGatewayEventRequestContext, input: Object ): Object;
 }
 
 /**
  * The implementation of the interface.
  */
 export class CqrsServiceImpl implements CqrsServiceBase {
-    handle(context: Context, input: Object): Object {
+    handle(context: APIGatewayEventRequestContext, input: Object): Object {
         return {};
     }
 }

@@ -2,12 +2,12 @@
 import OrganizationModel from '../models/organization-mongo-model';
 import { CqrsServiceBase } from '../../../shared/services/ioc-services';
 import { CreateOrganizationInputModel, CreateOrganizationOutputModel } from '../models/organization-model';
-import { Context } from 'aws-lambda';
+import { APIGatewayEventRequestContext } from 'aws-lambda';
 
-export class CreateOrganizationCommandHandlerHandler implements CqrsServiceBase {
+export class CreateOrganizationCommandHandler implements CqrsServiceBase {
 
     async handle(
-        context: Context,
+        context: APIGatewayEventRequestContext,
         input: CreateOrganizationInputModel
     ): Promise<CreateOrganizationOutputModel> {
         try {
