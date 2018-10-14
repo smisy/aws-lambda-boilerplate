@@ -1,4 +1,4 @@
-import { CreateOrganizationCommandHandlerHandler } from './services/create-organization-command-handler';
+import { CreateOrganizationCommandHandler } from './services/create-organization-command-handler';
 import {
   APIGatewayProxyHandler,
   APIGatewayProxyEvent,
@@ -10,22 +10,20 @@ import {
   CreateOrganizationInputModel
 } from './models/organization-model';
 import { startMongoose } from '../../shared/mongoose/mongoose';
-import {
-  CreateOrganizationUserRoleInputModel
-} from './models/organization-user-role-model';
-import { CreateOrganizationUserRoleCommandHandlerHandler } from './services/create-organization-user-role-command-handler';
+import { CreateOrganizationUserInputModel } from '../users/models/organization-user-model';
+import { CreateOrganizationUserCommandHandler } from '../users/services/create-organization-user-command-handler';
 import { ResponseBuilder } from '../../shared/response-builder';
 
 export default class OrganizationController {
-  private createOrganizationHandler: CreateOrganizationCommandHandlerHandler;
-  private createOrganizationUserRoleHandler: CreateOrganizationUserRoleCommandHandlerHandler;
+  private createOrganizationHandler: CreateOrganizationCommandHandler;
+  private createOrganizationUserHandler: CreateOrganizationUserCommandHandler;
 
   /**
    * @memberof OrganizationController
    */
   constructor() {
-    this.createOrganizationHandler = new CreateOrganizationCommandHandlerHandler();
-    this.createOrganizationUserRoleHandler = new CreateOrganizationUserRoleCommandHandlerHandler();
+    this.createOrganizationHandler = new CreateOrganizationCommandHandler();
+    this.createOrganizationUserHandler = new CreateOrganizationUserCommandHandler();
   }
 
   /**
@@ -46,15 +44,20 @@ export default class OrganizationController {
     await startMongoose();
     try {
       organizationOutput = await this.createOrganizationHandler.handle(
+        event.requestContext,
         organizationData
       );
-      const organizationUserRole: CreateOrganizationUserRoleInputModel = {
+      const organizationUser: CreateOrganizationUserInputModel = {
         user: event.requestContext.authorizer.principalId,
         organization: organizationOutput.organization.id
       };
-      await this.createOrganizationUserRoleHandler.handle(
-        organizationUserRole
+      await this.createOrganizationUserHandler.handle(
+        event.requestContext,
+        organizationUser
       );
+
+      // update user model
+
       return ResponseBuilder.ok({
         ...organizationOutput
       });

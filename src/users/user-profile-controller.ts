@@ -10,13 +10,13 @@ import { startMongoose } from '../../shared/mongoose/mongoose';
 import { ResponseBuilder } from '../../shared/response-builder';
 
 export default class UserProfileController {
-  private getUsetProfileHandler: GetUserProfileHandler;
+  private getUserProfileHandler: GetUserProfileHandler;
 
   /**
    * @memberof UserProfileController
    */
   constructor() {
-    this.getUsetProfileHandler = new GetUserProfileHandler();
+    this.getUserProfileHandler = new GetUserProfileHandler();
   }
 
   /**
@@ -30,13 +30,13 @@ export default class UserProfileController {
     event: APIGatewayProxyEvent,
     context: Context
   ): Promise<APIGatewayProxyResult> => {
-    const id = event.requestContext.authorizer.principalId;
+    const authorizer = event.requestContext.authorizer;
 
-    const user: GetUserProfileInput = { id };
+    const user: GetUserProfileInput = { id: authorizer.user.id };
     let userOutput: GetUserProfileOutput;
     await startMongoose();
     try {
-      userOutput = await this.getUsetProfileHandler.handle(user);
+      userOutput = await this.getUserProfileHandler.handle(event.requestContext, user);
       return ResponseBuilder.ok(userOutput.user);
     } catch (error) {
       return ResponseBuilder.unprocessableEntity(error.message);

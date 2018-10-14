@@ -3,6 +3,7 @@ import { Policy } from '../models/auth-model';
 import * as Acl from 'acl';
 const acl = new Acl(new Acl.memoryBackend());
 import policies from '../../../shared/policies';
+import { APIGatewayEventRequestContext } from 'aws-lambda';
 
 export class UserValidateRoleHandler implements CqrsServiceBase {
   constructor() {
@@ -11,7 +12,7 @@ export class UserValidateRoleHandler implements CqrsServiceBase {
     });
   }
 
-  async handle(input: Policy): Promise<boolean> {
+  async handle(context: APIGatewayEventRequestContext, input: Policy): Promise<boolean> {
     try {
       // validate role
       const returnValue = await this.isAllowed(input);

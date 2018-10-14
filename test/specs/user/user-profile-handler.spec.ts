@@ -32,7 +32,7 @@ describe('Get User Profile', () => {
 
   it('should return 200 get profile request with right authorizer', async () => {
     let authorizer: AuthResponseContext = {
-      principalId: user.id
+      user
     };
     let { response, body } = await userProfileRequest.callGetProfileAPI(
       authorizer
@@ -42,8 +42,9 @@ describe('Get User Profile', () => {
   });
 
   it('should return 422 get profile request with invalid user Id', async () => {
+    user.id = '12345678';
     let authorizer: AuthResponseContext = {
-      principalId: '12345678'
+      user
     };
     let { response, body } = await userProfileRequest.callGetProfileAPI(
       authorizer
@@ -53,8 +54,9 @@ describe('Get User Profile', () => {
   });
 
   it('should return 422 get profile request with empty user Id', async () => {
+    user.id = undefined;
     let authorizer: AuthResponseContext = {
-      principalId: undefined
+      user
     };
     let { response, body } = await userProfileRequest.callGetProfileAPI(
       authorizer
@@ -62,5 +64,4 @@ describe('Get User Profile', () => {
     response.statusCode.should.be.equal(422);
     body.should.have.property('error');
   });
-
 });

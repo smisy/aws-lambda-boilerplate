@@ -98,6 +98,29 @@ functions:
               - ${file(./swagger/error-responses/forbidden.yml)}
               - ${file(./swagger/error-responses/not-found.yml)}
               - ${file(./swagger/error-responses/internal-server-error.yml)}
+  createOrganization:
+    handler: src/organizations/organization.create
+    description: Create a new Organization
+    events:
+      - http:
+          path: organizations
+          method: post
+          cors: true
+          authorizer: authorize
+          documentation:
+            summary: Create a new Organization
+            tags:
+              - Organization
+            description: Returns a new organization.
+            methodResponses:
+              - statusCode: '200'
+                description: Returned when the operation is completed successfully.
+                responseModels:
+                  'application/json': UserData
+              - ${file(./swagger/error-responses/bad-request.yml)}
+              - ${file(./swagger/error-responses/forbidden.yml)}
+              - ${file(./swagger/error-responses/not-found.yml)}
+              - ${file(./swagger/error-responses/internal-server-error.yml)}
 custom:
   documentation: ${file(./swagger/documentation.yml)}
   # customDomain:

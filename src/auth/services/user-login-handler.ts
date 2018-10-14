@@ -2,10 +2,12 @@ import { CqrsServiceBase } from '../../../shared/services/ioc-services';
 import UserModel from '../../users/models/user-mongo-model';
 import { LoginInputModel, LoginOutputModel, AuthUser } from '../models/auth-model';
 import { JWTAuthenticator } from '../../../shared/jwt/JWTAuthenticator';
+import { APIGatewayEventRequestContext } from 'aws-lambda';
 
 export class UserLoginHandler implements CqrsServiceBase {
 
   async handle(
+    context: APIGatewayEventRequestContext,
     input: LoginInputModel
   ): Promise<LoginOutputModel> {
     try {
@@ -27,7 +29,7 @@ export class UserLoginHandler implements CqrsServiceBase {
       const jwtAuth = new JWTAuthenticator();
       let auth: AuthUser = {
         id: user.id,
-        roles: user.roles
+        globalRoles: user.globalRoles
       };
 
       const token = await jwtAuth.authenticate(auth);
