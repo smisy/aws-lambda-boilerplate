@@ -58,7 +58,7 @@
     "coveralls": "^3.0.2",
     "fork-ts-checker-webpack-plugin": "^0.4.6",
     "mocha": "^5.2.0",
-    "mockgoose": "^7.3.5",
+    "mockgoose": "^8.0.4",
     "nyc": "^12.0.2",
     "request-promise-native": "^1.0.5",
     "rimraf": "^2.6.2",
