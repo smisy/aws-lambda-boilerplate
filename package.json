@@ -66,7 +66,7 @@
     "serverless-aws-documentation": "^1.1.0",
     "serverless-domain-manager": "^2.6.0",
     "serverless-offline": "^3.25.6",
-    "serverless-plugin-typescript": "^1.1.5",
+    "serverless-plugin-typescript": "^1.1.9",
     "serverless-stack-output": "^0.2.3",
     "serverless-webpack": "^5.2.0",
     "should": "^13.2.3",
