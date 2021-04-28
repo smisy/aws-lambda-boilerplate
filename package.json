@@ -80,7 +80,7 @@
   },
   "dependencies": {
     "acl": "^0.4.11",
-    "generate-password": "^1.4.0",
+    "generate-password": "^1.4.1",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.10",
     "mongoose": "^5.2.5",
